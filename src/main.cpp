@@ -48,7 +48,7 @@ const char *ntpServer = "pool.ntp.org";  // Recode to use TZ
 const long gmtOffset_sec = 3600;
 const int daylightOffset_sec = 0;
 
-Energyleaf::V1::Detector detector;
+//Energyleaf::V1::Detector detector;
 
 #define PART_BOUNDARY "123456789000000000000987654321"
 static const char *_STREAM_CONTENT_TYPE =
@@ -62,7 +62,7 @@ httpd_handle_t stream_httpd = NULL;
 static esp_err_t stream_handler(httpd_req_t *req) {
     char *part_buf[64];
     esp_err_t res = ESP_OK;
-    detector.initialize();
+    //detector.initialize();
 
     Serial.println("Stream requested");
     res = httpd_resp_set_type(req, _STREAM_CONTENT_TYPE);
@@ -79,26 +79,26 @@ static esp_err_t stream_handler(httpd_req_t *req) {
 
     while (true) {
         try {
-            detector.push();
+            //detector.push();
         } catch (std::runtime_error &err) {
             Serial.println(err.what());
             return ESP_FAIL;
         }
 
         if (res == ESP_OK) {
-            size_t hlen = snprintf((char *)part_buf, 64, _STREAM_PART,
-                                   detector.getJpgBufLen());
-            res = httpd_resp_send_chunk(req, (const char *)part_buf, hlen);
+           // size_t hlen = snprintf((char *)part_buf, 64, _STREAM_PART,
+                                   //detector.getJpgBufLen());
+           // res = httpd_resp_send_chunk(req, (const char *)part_buf, hlen);
         }
         if (res == ESP_OK) {
-            res = httpd_resp_send_chunk(req, (const char *)detector.getJpgBuf(),
-                                        detector.getJpgBufLen());
+           //res = httpd_resp_send_chunk(req, (const char *)detector.getJpgBuf(),
+             //                           detector.getJpgBufLen());
         }
         if (res == ESP_OK) {
             res = httpd_resp_send_chunk(req, _STREAM_BOUNDARY,
                                         strlen(_STREAM_BOUNDARY));
         }
-        detector.afterPush();
+        //detector.afterPush();
 
         if (res != ESP_OK) {
             break;
@@ -106,7 +106,7 @@ static esp_err_t stream_handler(httpd_req_t *req) {
         vTaskDelay(UPDATE_INTERVAL / portTICK_PERIOD_MS);
     }
 
-    detector.deinitialize();
+    //detector.deinitialize();
 
     return res;
 }
@@ -131,6 +131,11 @@ void setup() {
 
     Serial.begin(115200);
     Serial.setDebugOutput(true);
+
+  log_d("Total heap: %d", ESP.getHeapSize());
+  log_d("Free heap: %d", ESP.getFreeHeap());
+  log_d("Total PSRAM: %d", ESP.getPsramSize());
+  log_d("Free PSRAM: %d", ESP.getFreePsram());
 
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
@@ -182,12 +187,12 @@ void setup() {
     Serial.println(WiFi.localIP());
 
     if (USE_WEBSERVER) {
-        detector.setUseWithWebServer(true);
+        //detector.setUseWithWebServer(true);
         //startCameraServer();
-        detector.setGenerateJpegCall(true);
+        //detector.setGenerateJpegCall(true);
     } else {
         //detector.initialize();
-        detector.setAfterPushCall(true);
+        //detector.setAfterPushCall(true);
     }
 
     //auto sourcelink = plan.createLink(Energyleaf::Stream::V1::Link::make_SourceLinkUPtr<Energyleaf::Stream::V1::Core::Operator::SourceOperator::StringDemoSourceOperator>());
@@ -233,7 +238,7 @@ void setup() {
    camerasourcelink.get()->getOperator().start();
     auto pipelink2 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::CropPipeOperator>());
     pipelink2.get()->getOperator().setSize(120, 60, 0, 240);
-    /*auto pipelink3 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::DetectorPipeOperator>());
+    auto pipelink3 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::DetectorPipeOperator>());
     pipelink3->getOperator().setLowerBorder(Energyleaf::Stream::V1::Types::Pixel::HSV(90.f,50.f,70.f));
     pipelink3->getOperator().setHigherBorder(Energyleaf::Stream::V1::Types::Pixel::HSV(128.f,255.f,255.f));
     auto pipelink4 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::SelectPipeOperator>());
@@ -241,22 +246,22 @@ void setup() {
     auto pipelink5 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::StatePipeOperator>());
     pipelink5->getOperator().setState(false);
     auto pipelink6 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::CalculatorPipeOperator>());
-    pipelink6->getOperator().setRotationPerKWh(375);*/
+    pipelink6->getOperator().setRotationPerKWh(375);
 
     /*auto websink = plan.createLink(Energyleaf::Stream::V1::Link::make_SinkLinkUPtr<Energyleaf::Stream::V1::Core::Operator::SinkOperator::WebSenderSinkOperator>());
     websink->getOperator().setSensorId(std::string("TestSensor").c_str());
     websink->getOperator().setHost("google.de");
     websink->getOperator().setPort(443);
     websink->getOperator().setEndpoint("demo");*/
-    //auto sinklink = plan.createLink(Energyleaf::Stream::V1::Link::make_SinkLinkUPtr<Energyleaf::Stream::V1::Core::Operator::SinkOperator::SerialSinkOperator>());
+    auto sinklink = plan.createLink(Energyleaf::Stream::V1::Link::make_SinkLinkUPtr<Energyleaf::Stream::V1::Core::Operator::SinkOperator::SerialSinkOperator>());
     //plan.connect(sourcelink,sinklink);
     plan.connect(camerasourcelink,pipelink2);
-    /*plan.connect(pipelink2,pipelink3);
+    plan.connect(pipelink2,pipelink3);
     plan.connect(pipelink3,pipelink4);
     plan.connect(pipelink4,pipelink5);
-    plan.connect(pipelink5,pipelink6);*/
+    plan.connect(pipelink5,pipelink6);
     //plan.connect(pipelink5,websink);
-    //plan.connect(pipelink6,sinklink);
+    plan.connect(pipelink6,sinklink);
 }
 
 void loop() {

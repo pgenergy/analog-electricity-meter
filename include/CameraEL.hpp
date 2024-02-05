@@ -5,12 +5,14 @@
 #include <esp32-hal-psram.h>
 #include <esp_camera.h>
 #include "Arduino.h"
+#include "Extras/Device/ESP/LED/CameraLED.hpp"
+#include "CameraLED.hpp"
 
 class CameraEL : public Energyleaf::Stream::V1::Extras::Vision::AbstractCamera<camera_config_t> {
     public:
         using CameraConfig = camera_config_t;
 
-        CameraEL() : AbstractCamera() {
+        CameraEL() : AbstractCamera(), led(4, 2, 15) {
         }
 
         virtual ~CameraEL() {
@@ -30,6 +32,7 @@ class CameraEL : public Energyleaf::Stream::V1::Extras::Vision::AbstractCamera<c
         }
     private:
         camera_config_t vConfig;
+        Energyleaf::Stream::V1::Extras::Device::ESP::LED::CameraLED led;
     protected:
         void internalStart() override{
             esp_err_t err = esp_camera_init(&this->vConfig);
