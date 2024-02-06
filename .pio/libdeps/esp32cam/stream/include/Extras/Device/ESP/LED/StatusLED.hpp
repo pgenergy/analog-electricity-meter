@@ -16,7 +16,9 @@ namespace Energyleaf::Stream::V1::Extras::Device::ESP::LED {
 #endif
         }
 
-        ~StatusLED() override = default;
+        ~StatusLED() override {
+            this->disable();
+        }
 
     private:
     protected:

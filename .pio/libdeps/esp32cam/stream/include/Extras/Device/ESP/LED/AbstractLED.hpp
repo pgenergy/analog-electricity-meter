@@ -16,7 +16,7 @@ namespace Energyleaf::Stream::V1::Extras::Device::ESP::LED {
         explicit AbstractLED(std::uint8_t vPin) : vPin(vPin), vEnable(false) {
         }
 
-        virtual ~AbstractLED() { this->disable(); }
+        virtual ~AbstractLED() = default;
 
         void enable() {
             this->vEnable = true;

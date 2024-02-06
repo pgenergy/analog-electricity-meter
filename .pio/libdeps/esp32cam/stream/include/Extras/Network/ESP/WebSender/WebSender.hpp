@@ -69,6 +69,7 @@ namespace Energyleaf::Stream::V1::Extras::Network::ESP {
         bool vPortSet;
         bool vCertSet;
         virtual void send(const T& data) = 0;
+        virtual void send(const T& data, const std::string& token) = 0;
 #ifdef ENERGYLEAF_ESP
         WiFiClientSecure vWifiClientSecure;
 #endif

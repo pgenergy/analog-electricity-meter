@@ -12,8 +12,8 @@
 
 namespace Energyleaf::Stream::V1::Core::Operator::PipeOperator {
     class CropPipeOperator
-            : public Energyleaf::Stream::V1::Operator::AbstractPipeOperator<Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Image>,
-                    Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Image>> {
+            : public Energyleaf::Stream::V1::Operator::AbstractPipeOperator<Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Image,std::string>,
+                    Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Image,std::string>> {
     public:
         void setSize(int x, int width, int y, int height) {
             this->vX = x;
@@ -27,9 +27,10 @@ namespace Energyleaf::Stream::V1::Core::Operator::PipeOperator {
         int vY = 0;
         int vHeight = 0;
     protected:
-        void work(Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Image> &inputTuple,
-                  Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Image> &outputTuple) override {
-            Energyleaf::Stream::V1::Types::Image img = inputTuple.getItem<Energyleaf::Stream::V1::Types::Image>(0).getData();
+        void work(Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Image,std::string> &inputTuple,
+                  Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Image,std::string> &outputTuple) override {
+            outputTuple.addItem(inputTuple.getItem<std::string>(0));
+            Energyleaf::Stream::V1::Types::Image img = inputTuple.getItem<Energyleaf::Stream::V1::Types::Image>(1).getData();
             inputTuple.clear();
 
             if (this->vX < 0 || this->vWidth <= 0 || this->vX + this->vWidth > img.getWidth() ||

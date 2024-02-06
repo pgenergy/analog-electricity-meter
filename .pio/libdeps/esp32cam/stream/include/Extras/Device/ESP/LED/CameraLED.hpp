@@ -18,7 +18,9 @@ namespace Energyleaf::Stream::V1::Extras::Device::ESP::LED {
 #endif
         }
 
-        ~CameraLED() override = default;
+        ~CameraLED() override {
+            this->disable();
+        }
 
         void setDuty(std::uint32_t&& duty) {
             this->vDuty = duty;

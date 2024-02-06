@@ -12,7 +12,7 @@
 
 namespace Energyleaf::Stream::V1::Core::Operator::PipeOperator {
     class CalculatorPipeOperator
-            : public Energyleaf::Stream::V1::Operator::AbstractPipeOperator<Energyleaf::Stream::V1::Tuple::Tuple<bool>, Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Power>> {
+            : public Energyleaf::Stream::V1::Operator::AbstractPipeOperator<Energyleaf::Stream::V1::Tuple::Tuple<bool,std::string>, Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Power,std::string>> {
     public:
         static constexpr float WATT_PER_MILLISECOND = 3600000.0f;
         static constexpr float WATT_PER_SECOND = 3600.0f;
@@ -58,7 +58,7 @@ namespace Energyleaf::Stream::V1::Core::Operator::PipeOperator {
         unsigned long vLast;
         int vRotationPerKWh = 0;
         bool vRotationPerKWhSet = false;
-        float wattPer = WATT_PER_MINUTE;
+        float wattPer = WATT_PER_SECOND;
         Energyleaf::Stream::V1::Types::Power power;
         bool vRun = false;
 
@@ -70,13 +70,12 @@ namespace Energyleaf::Stream::V1::Core::Operator::PipeOperator {
 #endif
          }
     protected:
-        void work(Energyleaf::Stream::V1::Tuple::Tuple<bool> &inputTuple,
-                  Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Power> &outputTuple) override {
+        void work(Energyleaf::Stream::V1::Tuple::Tuple<bool,std::string> &inputTuple,
+                  Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Power,std::string> &outputTuple) override {
             if(!this->vRotationPerKWhSet) {
                 throw std::runtime_error("Operator was not configured before use! Config before first use!");
             }
             this->vRun = true;
-            log_d("Calculator");
 
             if(this->vLast > 0) {
                 unsigned long current = getCurrentTime();
@@ -92,6 +91,7 @@ namespace Energyleaf::Stream::V1::Core::Operator::PipeOperator {
                 this->vLast = getCurrentTime();
             }
             outputTuple.clear();
+            outputTuple.addItem(inputTuple.getItem<std::string>(0));
             outputTuple.addItem(std::string("Power"),power);
         }
     };
