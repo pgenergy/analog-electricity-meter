@@ -5,12 +5,14 @@
 #include <esp32-hal-psram.h>
 #include <esp_camera.h>
 #include "Arduino.h"
+#include "Extras/Device/ESP/LED/CameraLED.hpp"
+#include "CameraLED.hpp"
 
 class CameraEL : public Energyleaf::Stream::V1::Extras::Vision::AbstractCamera<camera_config_t> {
     public:
         using CameraConfig = camera_config_t;
 
-        CameraEL() : AbstractCamera() {
+        CameraEL() : AbstractCamera(), led(4, 2, 15) {
         }
 
         virtual ~CameraEL() {
@@ -30,8 +32,10 @@ class CameraEL : public Energyleaf::Stream::V1::Extras::Vision::AbstractCamera<c
         }
     private:
         camera_config_t vConfig;
+        Energyleaf::Stream::V1::Extras::Device::ESP::LED::CameraLED led;
     protected:
         void internalStart() override{
+            log_d("Grab_Mode: %d", (&this->vConfig)->grab_mode);
             esp_err_t err = esp_camera_init(&this->vConfig);
             if (err != ESP_OK) {
                 throw std::runtime_error("Could not initialize the Camera!");
@@ -47,8 +51,11 @@ class CameraEL : public Energyleaf::Stream::V1::Extras::Vision::AbstractCamera<c
             vSensor->set_exposure_ctrl(vSensor, 1);  // auto exposure on
             vSensor->set_awb_gain(vSensor, 1);  // Auto White Balance enable (0 or 1)
             vSensor->set_brightness(vSensor, 0);  // (-2 to 2) - set brightness
+
+            this->led.enable();
         }
         void internalStop() override{
+            this->led.disable();
         }
         Energyleaf::Stream::V1::Types::Image getInternalImage() const override {
             camera_fb_t* framebuffer = esp_camera_fb_get();
