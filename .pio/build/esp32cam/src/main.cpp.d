@@ -236,7 +236,6 @@
  .pio/libdeps/esp32cam/stream/include/Extras/Device/ESP/LED/CameraLED.hpp \
  .pio/libdeps/esp32cam/stream/include/Extras/Device/ESP/LED/AbstractLED.hpp \
  /Users/slepik/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-gpio.h \
- include/CameraLED.hpp include/LED.hpp \
  .pio/libdeps/esp32cam/stream/include/Core/Operator/SourceOperator/CameraSourceOperator/CameraSourceOperator.hpp \
  .pio/libdeps/esp32cam/stream/include/Core/Operator/SourceOperator/CameraSourceOperator/CameraSourceOperatorTrait.hpp \
  .pio/libdeps/esp32cam/stream/include/Core/Operator/PipeOperator/CropPipeOperator/CropPipeOperator.hpp \

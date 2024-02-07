@@ -6,7 +6,6 @@
 #include <esp_camera.h>
 #include "Arduino.h"
 #include "Extras/Device/ESP/LED/CameraLED.hpp"
-#include "CameraLED.hpp"
 
 class CameraEL : public Energyleaf::Stream::V1::Extras::Vision::AbstractCamera<camera_config_t> {
     public:
