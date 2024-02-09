@@ -30,13 +30,6 @@ namespace Energyleaf::Stream::V1::Core::Operator::PipeOperator {
             outputTuple.clear();
             outputTuple.addItem(inputTuple.getItem<std::string>(0));
             outputTuple.addItem(std::string("SELECT"), select);
-            /*if(select) { //Not needed for actual select-operator
-                vProcessState = Energyleaf::Stream::V1::Operator::OperatorProcessState::CONTINUE;
-                outputTuple.clear();
-                outputTuple.addItem(std::string("SELECT"), select);
-            } else {
-                vProcessState = Energyleaf::Stream::V1::Operator::OperatorProcessState::STOP;
-            }*/
         }
     };
 }

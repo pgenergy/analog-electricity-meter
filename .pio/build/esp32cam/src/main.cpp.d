@@ -249,7 +249,7 @@
  .pio/libdeps/esp32cam/stream/include/Core/Operator/PipeOperator/CalculatorPipeOperator/CalculatorPipeOperator.hpp \
  .pio/libdeps/esp32cam/stream/include/Types/Power/Power.hpp \
  .pio/libdeps/esp32cam/stream/include/Core/Operator/SinkOperator/WebSenderSinkOperator/WebSenderSinkOperator.hpp \
- .pio/libdeps/esp32cam/stream/include/Extras/Network/ESP/WebSender/WebSender.hpp \
+ .pio/libdeps/esp32cam/stream/include/Extras/Network/WebSender/WebSender.hpp \
  /Users/slepik/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src/WiFiClientSecure.h \
  /Users/slepik/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src/ssl_client.h \
  /Users/slepik/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/platform.h \
@@ -295,5 +295,8 @@
  .pio/libdeps/esp32cam/Nanopb/pb.h \
  .pio/libdeps/esp32cam/stream/include/Core/Operator/SinkOperator/SerialSinkOperator/SerialSinkOperator.hpp \
  /Users/slepik/.platformio/packages/framework-arduinoespressif32/cores/esp32/HardwareSerial.h \
- .pio/libdeps/esp32cam/stream/include/Core/Operator/PipeOperator/WebRequestEnrichOperator/WebRequestEnrichOperator.hpp \
+ .pio/libdeps/esp32cam/stream/include/Core/Operator/PipeOperator/EnrichPipeOperator/EnrichPipeOperator.hpp \
+ include/TokenEnricher.hpp \
+ .pio/libdeps/esp32cam/stream/include/Core/Operator/PipeOperator/EnrichPipeOperator/AbstractEnricher.hpp \
+ .pio/libdeps/esp32cam/stream/include/Extras/Network/WebSender/AbstractWebSender.hpp \
  .pio/libdeps/esp32cam/Nanopb/pb_decode.h include/Auth.pb.h

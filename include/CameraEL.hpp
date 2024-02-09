@@ -1,5 +1,5 @@
-#ifndef ENERGYLEAF_V1_SOURCE_CAMERAEL
-#define ENERGYLEAF_V1_SOURCE_CAMERAEL
+#ifndef ENERGYLEAF_V1_SOURCE_CAMERAEL_HPP
+#define ENERGYLEAF_V1_SOURCE_CAMERAEL_HPP
 
 #include <Extras/Vision/Camera/AbstractCamera.hpp>
 #include <esp32-hal-psram.h>
@@ -103,4 +103,4 @@ class CameraEL : public Energyleaf::Stream::V1::Extras::Vision::AbstractCamera<c
         }
 };
 
-#endif
+#endif // ENERGYLEAF_V1_SOURCE_CAMERAEL_HPP

@@ -49,10 +49,12 @@ namespace Energyleaf::Stream::V1::Core::Operator::SourceOperator {
     protected:
         void work(Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Image> &outputTuple) override {
             Energyleaf::Stream::V1::Types::Image img = this->vCamera.getImage();
-            //log_d("Img.getData() != nullptr: %s", (img.getData() != nullptr) ? "true" : "false" );
             if(img.getData() != nullptr) {
                 outputTuple.clear();
                 outputTuple.addItem(std::string("Image"),img);
+                vProcessState = Energyleaf::Stream::V1::Operator::OperatorProcessState::CONTINUE;
+            } else {
+                vProcessState = Energyleaf::Stream::V1::Operator::OperatorProcessState::BREAK;
             }
         }
     };

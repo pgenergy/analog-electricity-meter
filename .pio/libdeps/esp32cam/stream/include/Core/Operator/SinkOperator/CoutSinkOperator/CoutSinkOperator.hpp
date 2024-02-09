@@ -16,7 +16,7 @@ namespace Energyleaf::Stream::V1::Core::Operator::SinkOperator {
     private:
     protected:
         void work(Energyleaf::Stream::V1::Tuple::Tuple<std::string> &inputTuple) override {
-            std::cout << "New Tuple: " << inputTuple.getItem<std::string>(0).getData() << std::endl;
+            std::cout << "New Tuple: [" << inputTuple.getItem<std::string>(0).getName() << "|" << inputTuple.getItem<std::string>(0).getData() << "]" << std::endl;
         }
     };
 

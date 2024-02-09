@@ -12,13 +12,15 @@
 #include "Operator/SinkOperator/AbstractSinkOperator.hpp"
 #include "Tuple/Tuple.hpp"
 #include "Types/Power/Power.hpp"
-#include "Extras/Network/ESP/WebSender/WebSender.hpp"
+#include "Extras/Network/WebSender/WebSender.hpp"
 #include <pb_encode.h>
 #include "Types/Buffer/ELData.pb.h"
 #include <Arduino.h>
 
 namespace Energyleaf::Stream::V1::Core::Operator::SinkOperator {
-    class WebSenderSinkOperator : public Energyleaf::Stream::V1::Operator::AbstractSinkOperator<Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Power,std::string>>, public Energyleaf::Stream::V1::Extras::Network::ESP::WebSender<Energyleaf::Stream::V1::Types::Power> {
+    class WebSenderSinkOperator : public Energyleaf::Stream::V1::Operator::AbstractSinkOperator<Energyleaf::Stream::V1::Tuple::Tuple<
+    Energyleaf::Stream::V1::Types::Power,std::string>>, 
+    public Energyleaf::Stream::V1::Extras::Network::ESP::WebSender<Energyleaf::Stream::V1::Types::Power> {
     public:
         void setEndpoint(std::string endpoint) { this->vEndpoint = std::move(endpoint); }
     private:

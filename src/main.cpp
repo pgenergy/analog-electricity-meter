@@ -26,7 +26,9 @@
 #include "Core/Operator/PipeOperator/CalculatorPipeOperator/CalculatorPipeOperator.hpp"
 #include "Core/Operator/SinkOperator/WebSenderSinkOperator/WebSenderSinkOperator.hpp"
 #include "Core/Operator/SinkOperator/SerialSinkOperator/SerialSinkOperator.hpp"
-#include "Core/Operator/PipeOperator/WebRequestEnrichOperator/WebRequestEnrichOperator.hpp"
+#include "Core/Operator/PipeOperator/EnrichPipeOperator/EnrichPipeOperator.hpp"
+
+#include "TokenEnricher.hpp"
 
 SET_LOOP_TASK_STACK_SIZE(16 * 1024);  // 16KB
 
@@ -140,10 +142,10 @@ void setup() {
 
     camerasourcelink->getOperator().setCameraConfig(vConfig);
     camerasourcelink->getOperator().start();
-    auto enrichRequest = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::WebRequestEnrichOperator>());
-    enrichRequest->getOperator().setEndpoint("/token");
-    enrichRequest->getOperator().setHost("PALA.de");
-    enrichRequest->getOperator().setPort(443);
+    auto enrichRequest = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::EnrichPipeOperator<TokenEnricher>>());
+    enrichRequest->getOperator().getEnricher().setHost("PALA.de");
+    enrichRequest->getOperator().getEnricher().setPort(443);
+    enrichRequest->getOperator().getEnricher().setEndpoint("/token");
     auto pipelink2 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::CropPipeOperator>());
     pipelink2->getOperator().setSize(120, 60, 0, 240);
     auto pipelink3 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::DetectorPipeOperator>());

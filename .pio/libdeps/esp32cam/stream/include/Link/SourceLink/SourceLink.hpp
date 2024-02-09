@@ -43,7 +43,7 @@ namespace Energyleaf::Stream::V1::Link {
             if (this->vProcessed) this->vProcessed = false;
             if (!this->vProcessing) this->vProcessing = true;
 
-            if(this->vState == Operator::OperatorProcessState::CONTINUE) {
+            if(this->vState == Operator::OperatorProcessState::CONTINUE || this->vState == Operator::OperatorProcessState::BREAK) {
                 OutputTuple outputTuple;
                 this->vOperator.process(outputTuple);
                 this->vState = this->vOperator.getOperatorProcessState();
@@ -52,7 +52,6 @@ namespace Energyleaf::Stream::V1::Link {
                     if (this->vState == Operator::OperatorProcessState::CONTINUE) {
                         (*iterator)->setInputTuple(outputTuple);
                         (*iterator)->setOperatorProcessState(this->vState);
-                        //(*iterator)->setOperatorProcessState(Operator::OperatorProcessState::STOP);
                     } else {
                         (*iterator)->setOperatorProcessState(this->vState);
                     }
