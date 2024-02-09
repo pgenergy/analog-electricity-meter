@@ -75,16 +75,7 @@ public Energyleaf::Stream::V1::Extras::Network::AbstractWebSender<WiFiClientSecu
         const bool& isCertSet() { return this->vCertSet; }
 
         const bool& isPortSet() { return this->vCertSet; }
-    private:
-        std::string vHost;
-        std::string vEndpoint;
-        int vPort;
-        bool vPortSet;
-        bool vCertSet;
-        uint32_t vTokenExpires;
-        std::string vToken;
-        bool vTokenAvailable = false;
-    protected:
+
         bool work(Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Image> &inputTuple, Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Image,std::string>& outputTuple) override {
             if (this->vHost.empty() && this->vEndpoint.empty() && !this->vPortSet) {
                 throw std::runtime_error("Endpointdata not set!");
@@ -149,6 +140,15 @@ public Energyleaf::Stream::V1::Extras::Network::AbstractWebSender<WiFiClientSecu
                 return false;
             }
         }
+    private:
+        std::string vHost;
+        std::string vEndpoint;
+        int vPort;
+        bool vPortSet;
+        bool vCertSet;
+        uint32_t vTokenExpires;
+        std::string vToken;
+        bool vTokenAvailable = false;
 };
 
 #endif // STREAM_V1_CORE_OPERATOR_SOURCEOPERATOR_TOKENENRICHOPERATOR_HPP
