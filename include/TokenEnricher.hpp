@@ -2,8 +2,8 @@
 // Created by SlepiK on 02.02.2024.
 //
 
-#ifndef STREAM_V1_CORE_OPERATOR_SOURCEOPERATOR_TOKENENRICHOPERATOR_HPP
-#define STREAM_V1_CORE_OPERATOR_SOURCEOPERATOR_TOKENENRICHOPERATOR_HPP
+#ifndef SENSOR_ENRICHER_TOKENENRICHER_HPP
+#define SENSOR_ENRICHER_TOKENENRICHER_HPP
 
 #include <Core/Operator/PipeOperator/EnrichPipeOperator/AbstractEnricher.hpp>
 #include <Extras/Network/WebSender/AbstractWebSender.hpp>
@@ -11,6 +11,7 @@
 #include <Tuple/Tuple.hpp>
 #include <Types/Image/Image.hpp>
 #include <pb_decode.h>
+#include <pb_encode.h>
 #include <Auth.pb.h>
 
 extern const std::uint8_t rootca_crt_bundle_start[] asm(
@@ -151,4 +152,4 @@ public Energyleaf::Stream::V1::Extras::Network::AbstractWebSender<WiFiClientSecu
         bool vTokenAvailable = false;
 };
 
-#endif // STREAM_V1_CORE_OPERATOR_SOURCEOPERATOR_TOKENENRICHOPERATOR_HPP
+#endif // SENSOR_ENRICHER_TOKENENRICHER_HPP

@@ -9,25 +9,22 @@
 #include "esp_camera.h"
 #include "esp_http_server.h"
 #include "esp_log.h"
-#include "img_converters.h"
 #include "soc/rtc_cntl_reg.h"  //disable brownout problems
 #include "soc/soc.h"           //disable brownout problems
 #include "time.h"
 
 #include <Core/Plan/Plan.hpp>
-#include <Core/Operator/SourceOperator/StringDemoSourceOperator/StringDemoSourceOperator.hpp>
-#include "CameraEL.hpp"
 #include <Core/Operator/SourceOperator/CameraSourceOperator/CameraSourceOperator.hpp>
 #include <Core/Operator/PipeOperator/CropPipeOperator/CropPipeOperator.hpp>
 #include "Core/Operator/PipeOperator/DetectorPipeOperator/DetectorPipeOperator.hpp"
 #include "Core/Operator/PipeOperator/StatePipeOperator/StatePipeOperator.hpp"
 #include "Core/Operator/PipeOperator/SelectPipeOperator/SelectPipeOperator.hpp"
 #include "Core/Operator/PipeOperator/CalculatorPipeOperator/CalculatorPipeOperator.hpp"
-#include "Core/Operator/SinkOperator/WebSenderSinkOperator/WebSenderSinkOperator.hpp"
 #include "Core/Operator/PipeOperator/EnrichPipeOperator/EnrichPipeOperator.hpp"
-
+#include "Core/Operator/SinkOperator/SenderSinkOperator/SenderSinkOperator.hpp"
 #include "TokenEnricher.hpp"
-#include "Core/Operator/SinkOperator/WriteSinkOperator/WriteSinkOperator.hpp"
+#include "PowerSender.hpp"
+#include "CameraEL.hpp"
 
 SET_LOOP_TASK_STACK_SIZE(16 * 1024);  // 16KB
 
@@ -157,10 +154,10 @@ void setup() {
     auto pipelink6 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::CalculatorPipeOperator>());
     pipelink6->getOperator().setRotationPerKWh(375);
 
-    auto websink = plan.createLink(Energyleaf::Stream::V1::Link::make_SinkLinkUPtr<Energyleaf::Stream::V1::Core::Operator::SinkOperator::WebSenderSinkOperator>());
-    websink->getOperator().setHost("PALA.de");
-    websink->getOperator().setPort(443);
-    websink->getOperator().setEndpoint("/daten");
+    auto websink = plan.createLink(Energyleaf::Stream::V1::Link::make_SinkLinkUPtr<Energyleaf::Stream::V1::Core::Operator::SinkOperator::SenderSinkOperator<PowerSender>>());
+    websink->getOperator().getSender().setHost("PALA.de");
+    websink->getOperator().getSender().setPort(443);
+    websink->getOperator().getSender().setEndpoint("/daten");
     
     plan.connect(camerasourcelink,enrichRequest);
     plan.connect(enrichRequest,pipelink2);
@@ -173,13 +170,9 @@ void setup() {
 
 void loop() {
     ArduinoOTA.handle();
-    plan.process();
-
-    /*if (!USE_WEBSERVER) {
-        try {
-            //detector.push();
-        } catch (std::runtime_error &err) {
-            log_d("Error: %s", err.what());
-        }
-    }*/
+    try {
+        plan.process();
+    } catch (std::runtime_error &error) {
+        log_d("Error: %s", error.what());
+    }
 }
