@@ -2,7 +2,7 @@
 // Created by SlepiK on 29.01.24.
 //
 
-#include "Core/Operator/SinkOperator/CoutSinkOperator/CoutSinkOperator.hpp"
+//#include "Core/Operator/SinkOperator/CoutSinkOperator/CoutSinkOperator.hpp"
 #include "Core/Operator/SourceOperator/StringDemoSourceOperator/StringDemoSourceOperator.hpp"
 #include "Core/Operator/PipeOperator/CalculatorPipeOperator/CalculatorPipeOperator.hpp"
 #include "Core/Operator/PipeOperator/CropPipeOperator/CropPipeOperator.hpp"
@@ -21,10 +21,10 @@ int main(int argc, char *argv[])
     pipelink->getOperator().setCalculationFormat(Energyleaf::Stream::V1::Core::Operator::PipeOperator::CalculatorPipeOperator::CalculationFormat::SECOND);
     pipelink->getOperator().setRotationPerKWh(375);
     //auto pipelink2 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::CropPipeOperator>());
-    auto sinklink = plan.createLink(Energyleaf::Stream::V1::Link::make_SinkLinkUPtr<Energyleaf::Stream::V1::Core::Operator::SinkOperator::CoutSinkOperator>());
-    auto sinklink2 = plan.createLink(Energyleaf::Stream::V1::Link::make_SinkLinkUPtr<Energyleaf::Stream::V1::Core::Operator::SinkOperator::CoutSinkOperator>());
+    //auto sinklink = plan.createLink(Energyleaf::Stream::V1::Link::make_SinkLinkUPtr<Energyleaf::Stream::V1::Core::Operator::SinkOperator::CoutSinkOperator>());
+    //auto sinklink2 = plan.createLink(Energyleaf::Stream::V1::Link::make_SinkLinkUPtr<Energyleaf::Stream::V1::Core::Operator::SinkOperator::CoutSinkOperator>());
     //auto sinklink2 = plan.createLink(Energyleaf::Stream::V1::Link::make_SinkLinkUPtr<Energyleaf::Stream::V1::Core::Operator::SinkOperator::WebSenderSinkOperator>());
-    plan.connect(sourcelink,sinklink);
-    plan.connect(sourcelink,sinklink2);
+    //plan.connect(sourcelink,sinklink);
+    //plan.connect(sourcelink,sinklink2);
     plan.process();
 }
