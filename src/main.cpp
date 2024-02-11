@@ -15,7 +15,6 @@
 #include "time.h"
 
 #include <Core/Plan/Plan.hpp>
-#include <Core/Operator/SinkOperator/CoutSinkOperator/CoutSinkOperator.hpp>
 #include <Core/Operator/SourceOperator/StringDemoSourceOperator/StringDemoSourceOperator.hpp>
 #include "CameraEL.hpp"
 #include <Core/Operator/SourceOperator/CameraSourceOperator/CameraSourceOperator.hpp>
@@ -25,10 +24,10 @@
 #include "Core/Operator/PipeOperator/SelectPipeOperator/SelectPipeOperator.hpp"
 #include "Core/Operator/PipeOperator/CalculatorPipeOperator/CalculatorPipeOperator.hpp"
 #include "Core/Operator/SinkOperator/WebSenderSinkOperator/WebSenderSinkOperator.hpp"
-#include "Core/Operator/SinkOperator/SerialSinkOperator/SerialSinkOperator.hpp"
 #include "Core/Operator/PipeOperator/EnrichPipeOperator/EnrichPipeOperator.hpp"
 
 #include "TokenEnricher.hpp"
+#include "Core/Operator/SinkOperator/WriteSinkOperator/WriteSinkOperator.hpp"
 
 SET_LOOP_TASK_STACK_SIZE(16 * 1024);  // 16KB
 

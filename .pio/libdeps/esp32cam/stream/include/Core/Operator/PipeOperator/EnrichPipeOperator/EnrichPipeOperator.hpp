@@ -20,6 +20,10 @@ namespace Energyleaf::Stream::V1::Core::Operator::PipeOperator {
                 : vEnricher(std::move(other.vEnricher)) {
             }
 
+            explicit EnrichPipeOperator(EnrichPipeOperator& other) noexcept
+                : vEnricher(other.vEnricher) {
+            }
+
             ~EnrichPipeOperator() = default;
 
             Enricher& getEnricher() {

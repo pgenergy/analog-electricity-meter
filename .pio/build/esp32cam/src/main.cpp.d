@@ -224,10 +224,9 @@
  .pio/libdeps/esp32cam/stream/include/Link/SinkLink/SinkLink.hpp \
  .pio/libdeps/esp32cam/stream/include/Link/Wrapper/LinkWrapper.hpp \
  .pio/libdeps/esp32cam/stream/include/Link/SourceLink/SourceLink.hpp \
- .pio/libdeps/esp32cam/stream/include/Core/Operator/SinkOperator/CoutSinkOperator/CoutSinkOperator.hpp \
+ .pio/libdeps/esp32cam/stream/include/Core/Operator/SourceOperator/StringDemoSourceOperator/StringDemoSourceOperator.hpp \
  .pio/libdeps/esp32cam/stream/include/Tuple/Tuple.hpp \
  .pio/libdeps/esp32cam/stream/include/Tuple/Item/Item.hpp \
- .pio/libdeps/esp32cam/stream/include/Core/Operator/SourceOperator/StringDemoSourceOperator/StringDemoSourceOperator.hpp \
  include/CameraEL.hpp \
  .pio/libdeps/esp32cam/stream/include/Extras/Vision/Camera/AbstractCamera.hpp \
  .pio/libdeps/esp32cam/stream/include/Types/Image/Image.hpp \
@@ -293,10 +292,9 @@
  .pio/libdeps/esp32cam/Nanopb/pb.h \
  .pio/libdeps/esp32cam/stream/include/Types/Buffer/ELData.pb.h \
  .pio/libdeps/esp32cam/Nanopb/pb.h \
- .pio/libdeps/esp32cam/stream/include/Core/Operator/SinkOperator/SerialSinkOperator/SerialSinkOperator.hpp \
- /Users/slepik/.platformio/packages/framework-arduinoespressif32/cores/esp32/HardwareSerial.h \
  .pio/libdeps/esp32cam/stream/include/Core/Operator/PipeOperator/EnrichPipeOperator/EnrichPipeOperator.hpp \
  include/TokenEnricher.hpp \
  .pio/libdeps/esp32cam/stream/include/Core/Operator/PipeOperator/EnrichPipeOperator/AbstractEnricher.hpp \
  .pio/libdeps/esp32cam/stream/include/Extras/Network/WebSender/AbstractWebSender.hpp \
- .pio/libdeps/esp32cam/Nanopb/pb_decode.h include/Auth.pb.h
+ .pio/libdeps/esp32cam/Nanopb/pb_decode.h include/Auth.pb.h \
+ .pio/libdeps/esp32cam/stream/include/Core/Operator/SinkOperator/WriteSinkOperator/WriteSinkOperator.hpp
