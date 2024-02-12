@@ -34,7 +34,6 @@ class CameraEL : public Energyleaf::Stream::V1::Extras::Vision::AbstractCamera<c
         LED::CameraLED led;
     protected:
         void internalStart() override{
-            log_d("Grab_Mode: %d", (&this->vConfig)->grab_mode);
             esp_err_t err = esp_camera_init(&this->vConfig);
             if (err != ESP_OK) {
                 throw std::runtime_error("Could not initialize the Camera!");
