@@ -297,7 +297,6 @@
  .pio/libdeps/esp32cam/stream/include/Core/Operator/SinkOperator/SenderSinkOperator/AbstractSender.hpp \
  include/ELData.pb.h include/CameraEL.hpp \
  C:/Users/simon/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-psram.h \
- .pio/libdeps/esp32cam/stream/include/Extras/Device/ESP/LED/CameraLED.hpp \
- .pio/libdeps/esp32cam/stream/include/Extras/Device/ESP/LED/AbstractLED.hpp \
+ include/LED/CameraLED.hpp include/LED/AbstractLED.hpp \
  C:/Users/simon/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-gpio.h \
  include/PSRAMCreator.hpp
