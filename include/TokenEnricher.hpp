@@ -2,8 +2,8 @@
 // Created by SlepiK on 02.02.2024.
 //
 
-#ifndef STREAM_V1_CORE_OPERATOR_SOURCEOPERATOR_TOKENENRICHOPERATOR_HPP
-#define STREAM_V1_CORE_OPERATOR_SOURCEOPERATOR_TOKENENRICHOPERATOR_HPP
+#ifndef SENSOR_ENRICHER_TOKENENRICHER_HPP
+#define SENSOR_ENRICHER_TOKENENRICHER_HPP
 
 #include <Core/Operator/PipeOperator/EnrichPipeOperator/AbstractEnricher.hpp>
 #include <Extras/Network/WebSender/AbstractWebSender.hpp>
@@ -11,6 +11,7 @@
 #include <Tuple/Tuple.hpp>
 #include <Types/Image/Image.hpp>
 #include <pb_decode.h>
+#include <pb_encode.h>
 #include <Auth.pb.h>
 
 extern const std::uint8_t rootca_crt_bundle_start[] asm(
@@ -75,16 +76,7 @@ public Energyleaf::Stream::V1::Extras::Network::AbstractWebSender<WiFiClientSecu
         const bool& isCertSet() { return this->vCertSet; }
 
         const bool& isPortSet() { return this->vCertSet; }
-    private:
-        std::string vHost;
-        std::string vEndpoint;
-        int vPort;
-        bool vPortSet;
-        bool vCertSet;
-        uint32_t vTokenExpires;
-        std::string vToken;
-        bool vTokenAvailable = false;
-    protected:
+
         bool work(Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Image> &inputTuple, Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Image,std::string>& outputTuple) override {
             if (this->vHost.empty() && this->vEndpoint.empty() && !this->vPortSet) {
                 throw std::runtime_error("Endpointdata not set!");
@@ -149,6 +141,15 @@ public Energyleaf::Stream::V1::Extras::Network::AbstractWebSender<WiFiClientSecu
                 return false;
             }
         }
+    private:
+        std::string vHost;
+        std::string vEndpoint;
+        int vPort;
+        bool vPortSet;
+        bool vCertSet;
+        uint32_t vTokenExpires;
+        std::string vToken;
+        bool vTokenAvailable = false;
 };
 
-#endif // STREAM_V1_CORE_OPERATOR_SOURCEOPERATOR_TOKENENRICHOPERATOR_HPP
+#endif // SENSOR_ENRICHER_TOKENENRICHER_HPP

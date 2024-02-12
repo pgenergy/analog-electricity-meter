@@ -13,9 +13,9 @@ namespace Energyleaf::Stream::V1::Core::Operator::PipeOperator {
         public:
             AbstractEnricher() = default;
             ~AbstractEnricher() = default;
+            virtual bool work(TupleInput &inputTuple, TupleOutput& outputTuple) = 0;
         private:
         protected:
-            virtual bool work(TupleInput &inputTuple, TupleOutput& outputTuple) = 0;
     };
 } // STREAM_V1_CORE_OPERATOR_PIPEOPERATOR_ABSTRACTENRICHER_HPP
 

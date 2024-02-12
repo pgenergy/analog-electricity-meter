@@ -20,6 +20,10 @@ namespace Energyleaf::Stream::V1::Core::Operator::PipeOperator {
                 : vEnricher(std::move(other.vEnricher)) {
             }
 
+            explicit EnrichPipeOperator(EnrichPipeOperator& other) noexcept
+                : vEnricher(other.vEnricher) {
+            }
+
             ~EnrichPipeOperator() = default;
 
             Enricher& getEnricher() {
@@ -31,11 +35,11 @@ namespace Energyleaf::Stream::V1::Core::Operator::PipeOperator {
             void work(Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Image> &inputTuple, 
             Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Image,std::string>& outputTuple) override {
                 try {
-                    /*if(vEnricher.work(inputTuple,outputTuple)) {
+                    if(vEnricher.work(inputTuple,outputTuple)) {
                         vProcessState = Energyleaf::Stream::V1::Operator::OperatorProcessState::CONTINUE;
                     } else {
                         vProcessState = Energyleaf::Stream::V1::Operator::OperatorProcessState::BREAK;
-                    }*/
+                    }
                 } catch (std::exception& e) {
                     vProcessState = Energyleaf::Stream::V1::Operator::OperatorProcessState::STOP;
                 }

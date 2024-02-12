@@ -5,7 +5,7 @@
 #include <esp32-hal-psram.h>
 #include <esp_camera.h>
 #include "Arduino.h"
-#include "Extras/Device/ESP/LED/CameraLED.hpp"
+#include <LED/CameraLED.hpp>
 
 class CameraEL : public Energyleaf::Stream::V1::Extras::Vision::AbstractCamera<camera_config_t> {
     public:
@@ -31,10 +31,9 @@ class CameraEL : public Energyleaf::Stream::V1::Extras::Vision::AbstractCamera<c
         }
     private:
         camera_config_t vConfig;
-        Energyleaf::Stream::V1::Extras::Device::ESP::LED::CameraLED led;
+        LED::CameraLED led;
     protected:
         void internalStart() override{
-            log_d("Grab_Mode: %d", (&this->vConfig)->grab_mode);
             esp_err_t err = esp_camera_init(&this->vConfig);
             if (err != ESP_OK) {
                 throw std::runtime_error("Could not initialize the Camera!");
