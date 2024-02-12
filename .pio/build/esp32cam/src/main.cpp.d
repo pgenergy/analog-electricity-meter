@@ -229,6 +229,11 @@
  .pio/libdeps/esp32cam/stream/include/Tuple/Item/Item.hpp \
  .pio/libdeps/esp32cam/stream/include/Types/Image/Image.hpp \
  .pio/libdeps/esp32cam/stream/include/Types/Image/ImageFormat.hpp \
+ .pio/libdeps/esp32cam/stream/include/Core/Constants/Settings.hpp \
+ .pio/libdeps/esp32cam/stream/include/Extras/Memory/CreatorContainer.hpp \
+ .pio/libdeps/esp32cam/stream/include/Extras/Memory/ICreator.hpp \
+ .pio/libdeps/esp32cam/stream/include/Extras/Memory/CreatorArgument.hpp \
+ .pio/libdeps/esp32cam/stream/include/Extras/Memory/DefaultCreator.hpp \
  .pio/libdeps/esp32cam/stream/include/Core/Operator/SourceOperator/CameraSourceOperator/CameraSourceOperatorTrait.hpp \
  .pio/libdeps/esp32cam/stream/include/Extras/Vision/Camera/AbstractCamera.hpp \
  .pio/libdeps/esp32cam/stream/include/Core/Operator/PipeOperator/CropPipeOperator/CropPipeOperator.hpp \
@@ -294,4 +299,5 @@
  C:/Users/simon/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-psram.h \
  .pio/libdeps/esp32cam/stream/include/Extras/Device/ESP/LED/CameraLED.hpp \
  .pio/libdeps/esp32cam/stream/include/Extras/Device/ESP/LED/AbstractLED.hpp \
- C:/Users/simon/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-gpio.h
+ C:/Users/simon/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-gpio.h \
+ include/PSRAMCreator.hpp

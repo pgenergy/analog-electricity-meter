@@ -6,7 +6,6 @@
 #define ENERGYLEAF_STREAM_V1_TYPES_IMAGEFORMAT_HPP
 
 namespace Energyleaf::Stream::V1::Types {
-
     enum class ImageFormat : int {
         FB_RGB888 = 0,
         FB_BGR888 = 1,

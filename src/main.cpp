@@ -25,6 +25,8 @@
 #include "TokenEnricher.hpp"
 #include "PowerSender.hpp"
 #include "CameraEL.hpp"
+#include <Core/Constants/Settings.hpp>
+#include "PSRAMCreator.hpp"
 
 SET_LOOP_TASK_STACK_SIZE(16 * 1024);  // 16KB
 
@@ -98,6 +100,8 @@ void setup() {
 
     Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
+
+    Energyleaf::Stream::Constants::Settings::uint8_tCreator.setCreator(std::make_unique<PSRAMCreator<std::uint8_t>>());
 
     auto camerasourcelink = plan.createLink(Energyleaf::Stream::V1::Link::make_SourceLinkUPtr<Energyleaf::Stream::V1::Core::Operator::SourceOperator::CameraSourceOperator<CameraEL>>());
     
