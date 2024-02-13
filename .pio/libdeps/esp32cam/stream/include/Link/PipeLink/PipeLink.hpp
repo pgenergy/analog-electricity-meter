@@ -128,3 +128,4 @@ namespace Energyleaf::Stream::V1::Link {
 } // Stream::V1::Link
 
 #endif //STREAM_V1_LINK_PIPELINK_HPP
+

@@ -1,8 +1,8 @@
 //
-// Created by SlepiK on 01.02.24.
+// Created by SlepiK on 13.02.24.
 //
 
-#ifndef ENERGYLEAF_STREAM_V1_EXTRAS_MEMORY_DEFAULTCREATOR_HPP 
+#ifndef ENERGYLEAF_STREAM_V1_EXTRAS_MEMORY_DEFAULTCREATOR_HPP
 #define ENERGYLEAF_STREAM_V1_EXTRAS_MEMORY_DEFAULTCREATOR_HPP
 
 #include <Extras/Memory/ICreator.hpp>
@@ -10,7 +10,7 @@
 namespace Energyleaf::Stream::V1::Extras::Memory {
     template <typename Type>
     class DefaultCreator : public ICreator<Type> {
-        public:
+    public:
         Type* create(std::size_t size) override {
             if(size > 1) {
                 auto pointer = new Type[size];

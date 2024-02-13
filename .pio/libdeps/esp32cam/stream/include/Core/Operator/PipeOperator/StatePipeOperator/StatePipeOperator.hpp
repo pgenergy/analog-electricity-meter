@@ -6,14 +6,13 @@
 #define STREAM_V1_CORE_OPERATOR_PIPEOPERATOR_STATEPIPEOPERATOR_HPP
 
 #include "Operator/PipeOperator/AbstractPipeOperator.hpp"
-#include "Types/Empty/EmptyType.hpp"
 #include "Tuple/Tuple.hpp"
 #include <utility>
 
 namespace Energyleaf::Stream::V1::Core::Operator::PipeOperator {
     class StatePipeOperator
             : public Energyleaf::Stream::V1::Operator::AbstractPipeOperator<Energyleaf::Stream::V1::Tuple::Tuple<bool,std::string>,
-            Energyleaf::Stream::V1::Tuple::Tuple<bool,std::string>>{
+                    Energyleaf::Stream::V1::Tuple::Tuple<bool,std::string>>{
     public:
         void setState(bool&& state) {
             if(!this->vReady) {
@@ -41,7 +40,7 @@ namespace Energyleaf::Stream::V1::Core::Operator::PipeOperator {
                 output = input;
                 this->vReady = true;
             }
-            
+
             if(output){
                 vProcessState = Energyleaf::Stream::V1::Operator::OperatorProcessState::CONTINUE;
                 outputTuple.clear();

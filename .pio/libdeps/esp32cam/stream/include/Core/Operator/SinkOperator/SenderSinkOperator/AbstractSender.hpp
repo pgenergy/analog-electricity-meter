@@ -1,5 +1,5 @@
 //
-// Created by SlepiK on 30.01.24.
+// Created by SlepiK on 13.02.24.
 //
 
 #ifndef STREAM_V1_CORE_OPERATOR_SINKOPERATOR_ABSTRACTSENDER_HPP
@@ -10,12 +10,12 @@
 namespace Energyleaf::Stream::V1::Core::Operator::SinkOperator {
     template<typename TupleInput>
     class AbstractSender {
-        public:
-            AbstractSender() = default;
-            ~AbstractSender() = default;
-            virtual bool work(TupleInput &inputTuple) = 0;
-        private:
-        protected:
+    public:
+        AbstractSender() = default;
+        ~AbstractSender() = default;
+        virtual bool work(TupleInput &inputTuple) = 0;
+    private:
+    protected:
     };
 } // STREAM_V1_CORE_OPERATOR_SINKOPERATOR_ABSTRACTSENDER_HPP
 

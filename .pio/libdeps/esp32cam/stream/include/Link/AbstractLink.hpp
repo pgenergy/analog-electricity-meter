@@ -7,26 +7,29 @@
 
 #include "ILink.hpp"
 #include "Trait/LinkTrait.hpp"
-#include "Operator/ProcessState/OperatorProcessState.hpp"
 
 namespace Energyleaf::Stream::V1::Link {
 
     class AbstractLink : public ILink {
     public:
-        AbstractLink() : vProcessed(false), vProcessing(false), vState(Operator::OperatorProcessState::CONTINUE) {
+        AbstractLink() : vProcessed(false), vProcessing(false) , vState(Operator::OperatorProcessState::CONTINUE){
         }
 
         ~AbstractLink() override = default;
 
-        [[nodiscard]] bool isProcessing() const override;
+        [[nodiscard]] bool isProcessing() const override {
+            return this->vProcessing;
+        }
 
-        [[nodiscard]] bool isProcessed() const override;
+        [[nodiscard]] bool isProcessed() const override {
+            return this->vProcessed;
+        }
 
     private:
     protected:
-        Operator::OperatorProcessState vState;
         bool vProcessing;
         bool vProcessed;
+        Operator::OperatorProcessState vState;
     };
 
 } // Stream::V1::Link

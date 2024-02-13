@@ -8,7 +8,6 @@
 #include <cstdint>
 #include <utility>
 #include "ImageFormat.hpp"
-#include <Arduino.h>
 #include <Core/Constants/Settings.hpp>
 
 namespace Energyleaf::Stream::V1::Types {
@@ -16,11 +15,11 @@ namespace Energyleaf::Stream::V1::Types {
     class Image {
     public:
         Image()
-            : vWidth(0), vHeight(0), vBytesPerPixel(0), vFormat(ImageFormat::FB_RGB888), vData(nullptr){
+                : vWidth(0), vHeight(0), vBytesPerPixel(0), vFormat(ImageFormat::FB_RGB888), vData(nullptr){
         };
 
         Image(int width, int height, int bytesPerPixel, ImageFormat format, std::uint8_t* data)
-            : vWidth(width), vHeight(height), vBytesPerPixel(bytesPerPixel), vFormat(format) {
+                : vWidth(width), vHeight(height), vBytesPerPixel(bytesPerPixel), vFormat(format) {
             size_t arraySize = this->vWidth * this->vHeight * this->vBytesPerPixel;
             this->vData = Energyleaf::Stream::Constants::Settings::uint8_tCreator.getCreator().create(arraySize);
             if (!vData) {
@@ -29,8 +28,8 @@ namespace Energyleaf::Stream::V1::Types {
             std::copy(data, data + arraySize, vData);
         }
 
-         Image(int width, int height, int bytesPerPixel, ImageFormat format)
-            : vWidth(width), vHeight(height), vBytesPerPixel(bytesPerPixel), vFormat(format) {
+        Image(int width, int height, int bytesPerPixel, ImageFormat format)
+                : vWidth(width), vHeight(height), vBytesPerPixel(bytesPerPixel), vFormat(format) {
             size_t arraySize = this->vWidth * this->vHeight * this->vBytesPerPixel;
             this->vData = Energyleaf::Stream::Constants::Settings::uint8_tCreator.getCreator().create(arraySize);
             if (!vData) {
@@ -137,7 +136,7 @@ namespace Energyleaf::Stream::V1::Types {
         void initData() {
             if(this->vData != nullptr) {
                 Energyleaf::Stream::Constants::Settings::uint8_tCreator.getCreator().destroy(vData,Energyleaf::Stream::V1::Extras::Memory::CreatorArgument::MULTI);
-            } 
+            }
             this->vData = Energyleaf::Stream::Constants::Settings::uint8_tCreator.getCreator().create(this->vWidth * this->vHeight * this->vBytesPerPixel);
             if (!vData) {
                 throw std::bad_alloc();

@@ -21,7 +21,7 @@ namespace Energyleaf::Stream::V1::Link {
         using OutputTuple = typename IsBasedOnAbstractSourceOperator<SourceOperator>::OutputTuple;
 
         explicit SourceLink(SourceOperator&& sourceOperator)
-            : vOperator(std::forward<SourceOperator>(sourceOperator)) {
+                : vOperator(std::forward<SourceOperator>(sourceOperator)) {
         }
 
         explicit SourceLink(SourceOperator& sourceOperator)

@@ -12,17 +12,21 @@ namespace Energyleaf::Stream::V1::Operator {
 
     class AbstractOperator : public IOperator {
     public:
-        AbstractOperator() : vProcessed(false), vProcessing(false),vProcessState(OperatorProcessState::CONTINUE) {
+        AbstractOperator() : vProcessed(false), vProcessing(false), vProcessState(OperatorProcessState::CONTINUE) {
         }
 
         ~AbstractOperator() override = default;
 
-        [[nodiscard]] bool isProcessing() const override;
-
-        [[nodiscard]] bool isProcessed() const override;
-
-        [[nodiscard]] OperatorProcessState getOperatorProcessState() const override {
+        [[nodiscard]] OperatorProcessState getOperatorProcessState() const final {
             return vProcessState;
+        }
+
+        [[nodiscard]] bool isProcessing() const override {
+            return this->vProcessing;
+        }
+
+        [[nodiscard]] bool isProcessed() const override {
+            return this->vProcessed;
         }
 
     protected:

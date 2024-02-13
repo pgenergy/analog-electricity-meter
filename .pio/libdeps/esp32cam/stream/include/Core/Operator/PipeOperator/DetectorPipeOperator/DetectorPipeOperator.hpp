@@ -56,7 +56,7 @@ namespace Energyleaf::Stream::V1::Core::Operator::PipeOperator {
                     ++foundPixel;
                 }
             }
-            log_d("Found red pixel: %d", foundPixel);
+
             outputTuple.clear();
             outputTuple.addItem(inputTuple.getItem<std::string>(0));
             outputTuple.addItem(std::string("FOUNDPIXEL"),foundPixel);
