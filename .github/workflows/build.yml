@@ -23,7 +23,11 @@ jobs:
           python-version: '3.9'
       - name: Set up SSH key and register with agent
         run: |
-          echo "$STREAMGIT" | ssh-add -
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.STREAMGIT }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/id_rsa
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
       - name: Build PlatformIO Project
