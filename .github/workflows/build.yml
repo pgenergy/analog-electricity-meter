@@ -21,11 +21,15 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-      - name: Install requirements
+      - name: Set up SSH key and register with agent
+        env:
+          SSH_AUTH_SOCK: ${{ runner.temp }}/ssh-agent.sock
         run: |
-          eval `ssh-agent -s`
-          echo "${{ secrets.STREAMGIT }}" | ssh-add -
+            ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+            ssh-add - <<< "${{ secrets.STREAMGIT }}"
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
       - name: Build PlatformIO Project
-        run: pio run
+        env:
+          SSH_AUTH_SOCK: ${{ runner.temp }}/ssh-agent.sock
+        run: pio run -e github
