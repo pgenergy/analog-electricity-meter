@@ -28,5 +28,4 @@ jobs:
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
       - name: Build PlatformIO Project
-          PLATFORMIO_ENVIRONMENT: github
-        run: pio run
+        run: pio run -e github
