@@ -21,9 +21,7 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-- name: Set up SSH key and register with agent
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.STREAMGIT }}
+      - name: Set up SSH key and register with agent
         run: |
           echo "$STREAMGIT" | ssh-add -
       - name: Install PlatformIO Core
