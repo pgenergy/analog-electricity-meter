@@ -25,6 +25,7 @@ jobs:
         run: |
             eval "$(ssh-agent -s)"
             echo "${{ secrets.STREAMGIT }}" | ssh-add -
+            export SSH_AUTH_SOCK=$(echo $SSH_AUTH_SOCK)
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
       - name: Build PlatformIO Project
