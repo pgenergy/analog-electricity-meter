@@ -74,6 +74,14 @@ class PowerSender :
 
         const bool& isPortSet() { return this->vCertSet; }
 
+
+        void setSecure(bool secure) override {
+            //Can actual only be set to insecure
+            if(!secure) {
+                this->getSender().setInsecure();
+            }
+        }
+
         bool work(Energyleaf::Stream::V1::Tuple::Tuple<Energyleaf::Stream::V1::Types::Power,std::string> &inputTuple) override {
             if (this->vHost.empty() && this->vEndpoint.empty() && !this->vPortSet) {
                 throw std::runtime_error("Endpointdata not set!");
