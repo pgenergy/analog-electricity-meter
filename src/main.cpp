@@ -22,18 +22,21 @@
 #include "Core/Operator/PipeOperator/CalculatorPipeOperator/CalculatorPipeOperator.hpp"
 #include "Core/Operator/PipeOperator/EnrichPipeOperator/EnrichPipeOperator.hpp"
 #include "Core/Operator/SinkOperator/SenderSinkOperator/SenderSinkOperator.hpp"
-#include "TokenEnricher.hpp"
-#include "PowerSender.hpp"
+#include "Enricher/Token.hpp"
+#include "Sender/Power.hpp"
 #include "CameraEL.hpp"
 #include <Core/Constants/Settings.hpp>
 #include "PSRAMCreator.hpp"
+#include <Expression/Datatype/DtSizeTExpression.hpp>
+#include <Expression/ToExpression/ToDtBoolExpression.hpp>
+#include <Expression/Compare/CompareExpression.hpp>
 
 SET_LOOP_TASK_STACK_SIZE(16 * 1024);  // 16KB
 
 constexpr bool USE_WEBSERVER = false;
 
-const char *ssid = "NTGR_043B";
-const char *password = "6EPXeo6T";
+const char *ssid = "FRITZ!Box 7590 OT";
+const char *password = "44090592638152189621";
 const char *otaPassword = "energyleaf";
 
 static const uint32_t UPDATE_INTERVAL = 50;
@@ -54,6 +57,7 @@ void setup() {
     log_d("Free heap: %d", ESP.getFreeHeap());
     log_d("Total PSRAM: %d", ESP.getPsramSize());
     log_d("Free PSRAM: %d", ESP.getFreePsram());
+    log_i("Current MAC: %s", WiFi.macAddress().c_str());
 
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
@@ -142,26 +146,29 @@ void setup() {
 
     camerasourcelink->getOperator().setCameraConfig(vConfig);
     camerasourcelink->getOperator().start();
-    auto enrichRequest = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::EnrichPipeOperator<TokenEnricher>>());
-    enrichRequest->getOperator().getEnricher().setHost("PALA.de");
-    enrichRequest->getOperator().getEnricher().setPort(443);
-    enrichRequest->getOperator().getEnricher().setEndpoint("/token");
+    auto enrichRequest = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::EnrichPipeOperator<Sensor::Enricher::Token>>());
+    enrichRequest->getOperator().getEnricher().getSender()->setHost("admin.energyleaf.de");
+    enrichRequest->getOperator().getEnricher().getSender()->setPort(443);
     auto pipelink2 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::CropPipeOperator>());
     pipelink2->getOperator().setSize(120, 60, 0, 240);
     auto pipelink3 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::DetectorPipeOperator>());
     pipelink3->getOperator().setLowerBorder(Energyleaf::Stream::V1::Types::Pixel::HSV(90.f,50.f,70.f));
     pipelink3->getOperator().setHigherBorder(Energyleaf::Stream::V1::Types::Pixel::HSV(128.f,255.f,255.f));
     auto pipelink4 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::SelectPipeOperator>());
-    pipelink4->getOperator().setThreshold(300);
+    //pipelink4->getOperator().setThreshold(300);//Expression
+    auto *ti = new Energyleaf::Stream::V1::Expression::DataType::DtSizeTExpression("FOUNDPIXEL");
+    auto *cv = new Energyleaf::Stream::V1::Expression::DataType::DtSizeTExpression(300);
+    auto *comp = new Energyleaf::Stream::V1::Expression::Compare::CompareExpression();
+    comp->add(ti);
+    comp->add(cv);
+    comp->setCompareType(Energyleaf::Stream::V1::Expression::Compare::CompareTypes::GREATER_THAN);
+    pipelink4->getOperator().setExpression(comp);
     auto pipelink5 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::StatePipeOperator>());
     pipelink5->getOperator().setState(false);
     auto pipelink6 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::CalculatorPipeOperator>());
     pipelink6->getOperator().setRotationPerKWh(375);
-
-    auto websink = plan.createLink(Energyleaf::Stream::V1::Link::make_SinkLinkUPtr<Energyleaf::Stream::V1::Core::Operator::SinkOperator::SenderSinkOperator<PowerSender>>());
-    websink->getOperator().getSender().setHost("PALA.de");
-    websink->getOperator().getSender().setPort(443);
-    websink->getOperator().getSender().setEndpoint("/daten");
+    auto websink = plan.createLink(Energyleaf::Stream::V1::Link::make_SinkLinkUPtr<Energyleaf::Stream::V1::Core::Operator::SinkOperator::SenderSinkOperator<Sensor::Sender::Power>>());
+    websink.get()->getOperator().getSender().setSender(enrichRequest.get()->getOperator().getEnricher());
     
     plan.connect(camerasourcelink,enrichRequest);
     plan.connect(enrichRequest,pipelink2);
