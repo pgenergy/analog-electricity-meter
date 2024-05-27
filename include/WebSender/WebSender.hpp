@@ -155,7 +155,7 @@ namespace Sensor::WebSender {
             uint16_t port; 
             char *accessToken; 
             uint32_t expiresIn = 0;
-            const SensorType type = SensorType_ANALOG_ELECTRICITY;    
+            const energyleaf_SensorType type = energyleaf_SensorType::energyleaf_SensorType_ANALOG_ELECTRICITY;    
             uint8_t retryCounter = 0;
             uint8_t manualMaxCounter = ENERGYLEAF_MANUALCOUNTER;
             uint8_t manualCurrentCounter = ENERGYLEAF_MANUALCOUNTER;
@@ -173,10 +173,10 @@ namespace Sensor::WebSender {
                         uint16_t bodySize = 0;
                         {
                             //Prepare SensorDataRequest
-                            uint8_t bufferSensorDataRequest[SensorDataRequest_size];
+                            uint8_t bufferSensorDataRequest[energyleaf_SensorDataRequest_size];
                             pb_ostream_t streamSensorDataRequestOut;
                             {
-                                SensorDataRequest sensorDataRequest = SensorDataRequest_init_default;
+                                energyleaf_SensorDataRequest sensorDataRequest = energyleaf_SensorDataRequest_init_default;
                                 memcpy(sensorDataRequest.access_token, this->accessToken, sizeof(this->accessToken));
                                 sensorDataRequest.type = this->type;
 
@@ -184,7 +184,7 @@ namespace Sensor::WebSender {
 
                                 streamSensorDataRequestOut = pb_ostream_from_buffer(bufferSensorDataRequest, sizeof(bufferSensorDataRequest));
 
-                                state = pb_encode(&streamSensorDataRequestOut,SensorDataRequest_fields, &sensorDataRequest);
+                                state = pb_encode(&streamSensorDataRequestOut,energyleaf_SensorDataRequest_fields, &sensorDataRequest);
                             }
 
                             if(!state) {
@@ -266,9 +266,9 @@ namespace Sensor::WebSender {
 
                         {
                             //Process received body and generate SensorDataResponse from it
-                            SensorDataResponse sensorDataResponse = SensorDataResponse_init_default;
+                            energyleaf_SensorDataResponse sensorDataResponse = energyleaf_SensorDataResponse_init_default;
                             {
-                                uint8_t bufferSensorDataResponse[SensorDataResponse_size];
+                                uint8_t bufferSensorDataResponse[energyleaf_SensorDataResponse_size];
                                 int currentSize = 0;
                                 {
                                     if(chunked) {
@@ -292,7 +292,7 @@ namespace Sensor::WebSender {
                                                 break;
                                             }
 
-                                            if(currentSize + l <= SensorDataResponse_size) {
+                                            if(currentSize + l <= energyleaf_SensorDataResponse_size) {
                                                 memcpy(bufferSensorDataResponse + currentSize, chunkData, l);
                                                 currentSize += l;
                                             } else {
@@ -321,7 +321,7 @@ namespace Sensor::WebSender {
 
                                 {
                                     pb_istream_t streamSensorDataResponseIn = pb_istream_from_buffer(bufferSensorDataResponse,currentSize);
-                                    state = pb_decode(&streamSensorDataResponseIn,SensorDataResponse_fields, &sensorDataResponse);
+                                    state = pb_decode(&streamSensorDataResponseIn,energyleaf_SensorDataResponse_fields, &sensorDataResponse);
                                 }
 
                                 if(!state) {
@@ -364,10 +364,10 @@ namespace Sensor::WebSender {
                         uint16_t bodySize = 0;
                         {
                             //Prepare TokenRequest
-                            uint8_t bufferTokenRequest[TokenRequest_size];
+                            uint8_t bufferTokenRequest[energyleaf_TokenRequest_size];
                             pb_ostream_t streamTokenRequestOut;
                             {
-                                TokenRequest tokenRequest = TokenRequest_init_default;
+                                energyleaf_TokenRequest tokenRequest = energyleaf_TokenRequest_init_default;
                                 //collect the MAC of this sensor
                                 memcpy(tokenRequest.client_id, WiFi.macAddress().c_str(), sizeof(tokenRequest.client_id));
                                 //set the type of this sensor
@@ -377,7 +377,7 @@ namespace Sensor::WebSender {
 
                                 streamTokenRequestOut = pb_ostream_from_buffer(bufferTokenRequest, sizeof(bufferTokenRequest));
 
-                                state = pb_encode(&streamTokenRequestOut,TokenRequest_fields, &tokenRequest);
+                                state = pb_encode(&streamTokenRequestOut,energyleaf_TokenRequest_fields, &tokenRequest);
                             }
 
                             if(!state) {
@@ -457,14 +457,14 @@ namespace Sensor::WebSender {
                             }       
                         }
 
-                        uint8_t bufferScriptAcceptedRequest[ScriptAcceptedRequest_size];
+                        uint8_t bufferScriptAcceptedRequest[energyleaf_ScriptAcceptedRequest_size];
                         pb_ostream_t streamScriptAcceptedRequestOut;
 
                         {
                             //Process received body and generate TokenResponse from it
-                            TokenResponse tokenResponse = TokenResponse_init_default;
+                            energyleaf_TokenResponse tokenResponse = energyleaf_TokenResponse_init_default;
                             {
-                                uint8_t bufferTokenResponse[TokenResponse_size];
+                                uint8_t bufferTokenResponse[energyleaf_TokenResponse_size];
                                 int currentSize = 0;
                                 {
                                     if(chunked) {
@@ -488,7 +488,7 @@ namespace Sensor::WebSender {
                                                 break;
                                             }
 
-                                            if(currentSize + l <= TokenResponse_size) {
+                                            if(currentSize + l <= energyleaf_TokenResponse_size) {
                                                 memcpy(bufferTokenResponse + currentSize, chunkData, l);
                                                 currentSize += l;
                                             } else {
@@ -516,7 +516,7 @@ namespace Sensor::WebSender {
 
                                 {
                                     pb_istream_t streamTokenResponseIn = pb_istream_from_buffer(bufferTokenResponse,currentSize);
-                                    state = pb_decode(&streamTokenResponseIn,TokenResponse_fields, &tokenResponse);
+                                    state = pb_decode(&streamTokenResponseIn,energyleaf_TokenResponse_fields, &tokenResponse);
                                 }
 
                                 if(!state) {

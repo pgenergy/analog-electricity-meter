@@ -3,6 +3,8 @@
 #include <WiFi.h>
 #include <fb_gfx.h>
 
+#include <WiFiManager.h> 
+
 #include <cstring>
 #include <deque>
 
@@ -59,14 +61,8 @@ void setup() {
     log_d("Free PSRAM: %d", ESP.getFreePsram());
     log_i("Current MAC: %s", WiFi.macAddress().c_str());
 
-    WiFi.mode(WIFI_STA);
-    WiFi.begin(ssid, password);
-    while (WiFi.waitForConnectResult() != WL_CONNECTED) {
-        Serial.println("Connection Failed! Rebooting...");
-        delay(5000);
-        ESP.restart();
-    }
-    Serial.println("Connected to WiFi!");
+    WiFiManager wifiManager;
+    wifiManager.autoConnect("Energyleaf_Sensor");
 
     configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 
