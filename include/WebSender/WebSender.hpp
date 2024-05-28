@@ -17,6 +17,15 @@
 #define ENERGYLEAF_MANUALCOUNTER 5
 #endif
 
+#ifndef ENERGYLEAF_ENDPOINT_TOKEN
+#define ENERGYLEAF_ENDPOINT_TOKEN "api/v1/token"
+#endif
+
+#ifndef ENERGYLEAF_ENDPOINT_DATA
+#define ENERGYLEAF_ENDPOINT_DATA "api/v1/sensor_input"
+#endif
+
+
 #include <WiFiClientSecure.h>
 
 #include <Energyleaf/Energyleaf.pb.h>
@@ -181,6 +190,8 @@ namespace Sensor::WebSender {
                                 sensorDataRequest.type = this->type;
 
                                 sensorDataRequest.value = this->value;
+                                sensorDataRequest.has_value_current = false;
+                                sensorDataRequest.has_value_out = false;
 
                                 streamSensorDataRequestOut = pb_ostream_from_buffer(bufferSensorDataRequest, sizeof(bufferSensorDataRequest));
 
@@ -201,7 +212,9 @@ namespace Sensor::WebSender {
                                     return ENERGYLEAF_ERROR::ERROR;
                                 }
 
-                                this->client->print(PSTR("POST /api/v1/sensor_input HTTP/1.1\r\n"));
+                                this->client->print(PSTR("POST /"));
+                                this->client->print(ENERGYLEAF_ENDPOINT_DATA);
+                                this->client->print(PSTR(" HTTP/1.1\r\n"));
                                 this->client->print(PSTR("Host: "));
                                 this->client->print(this->host);
                                 this->client->print(PSTR("\r\n"));
@@ -232,7 +245,14 @@ namespace Sensor::WebSender {
                                             log_d("ENERGYLEAF_DRIVER_DATA_REQUEST: GOT A %d STATUS",headerStatusCode);
                                         } else {
                                             log_d("ENERGYLEAF_DRIVER_DATA_REQUEST: UNSUCCESSFUL - GOT A %d STATUS",headerStatusCode);
-                                            //return ENERGYLEAF_ERROR::ERROR; //If a special status is known that results in no body here we can return direct
+                                            if(this->client->connected()){
+                                                this->client->stop(); 
+                                            }
+                                            if(headerStatusCode == ENERGYLEAF_TOKEN_EXPIRED_CODE) {
+                                                return ENERGYLEAF_ERROR::TOKEN_EXPIRED;
+                                            } else {
+                                                return ENERGYLEAF_ERROR::ERROR;
+                                            }
                                         }
                                         continue;
                                     }
@@ -394,7 +414,9 @@ namespace Sensor::WebSender {
                                     return ENERGYLEAF_ERROR::ERROR;
                                 }
 
-                                this->client->print(PSTR("POST /api/v1/token HTTP/1.1\r\n"));
+                                this->client->print(PSTR("POST /"));
+                                this->client->print(ENERGYLEAF_ENDPOINT_TOKEN);
+                                this->client->print(PSTR(" HTTP/1.1\r\n"));
                                 this->client->print(PSTR("Host: "));
                                 this->client->print(this->host);
                                 this->client->print(PSTR("\r\n"));
@@ -425,7 +447,14 @@ namespace Sensor::WebSender {
                                             log_d("ENERGYLEAF_DRIVER_TOKEN_REQUEST: GOT A %d STATUS",headerStatusCode);
                                         } else {
                                             log_d("ENERGYLEAF_DRIVER_TOKEN_REQUEST: UNSUCCESSFUL - GOT A %d STATUS",headerStatusCode);
-                                            //return ENERGYLEAF_ERROR::ERROR; //If a special status is known that results in no body here we can return direct
+                                            if(this->client->connected()){
+                                                this->client->stop(); 
+                                            }
+                                            if(headerStatusCode == ENERGYLEAF_TOKEN_EXPIRED_CODE) {
+                                                return ENERGYLEAF_ERROR::TOKEN_EXPIRED;
+                                            } else {
+                                                return ENERGYLEAF_ERROR::ERROR;
+                                            }
                                         }
                                         continue;
                                     }

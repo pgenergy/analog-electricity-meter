@@ -37,11 +37,8 @@ SET_LOOP_TASK_STACK_SIZE(16 * 1024);  // 16KB
 
 constexpr bool USE_WEBSERVER = false;
 
-const char *ssid = "FRITZ!Box 7590 OT";
-const char *password = "44090592638152189621";
-const char *otaPassword = "energyleaf";
-
 static const uint32_t UPDATE_INTERVAL = 50;
+const char *otaPassword = "energyleaf";
 
 const char *ntpServer = "pool.ntp.org";  // Recode to use TZ
 const long gmtOffset_sec = 3600;
