@@ -32,6 +32,7 @@
 #include <Expression/Datatype/DtSizeTExpression.hpp>
 #include <Expression/ToExpression/ToDtBoolExpression.hpp>
 #include <Expression/Compare/CompareExpression.hpp>
+#include "Executor/FRExecutor.hpp"
 
 SET_LOOP_TASK_STACK_SIZE(16 * 1024);  // 16KB
 
@@ -44,7 +45,7 @@ const char *ntpServer = "pool.ntp.org";  // Recode to use TZ
 const long gmtOffset_sec = 3600;
 const int daylightOffset_sec = 0;
 
-Energyleaf::Stream::V1::Core::Plan::Plan plan;
+Energyleaf::Stream::V1::Core::Plan::Plan plan(std::make_shared<Sensor::Executor::FRExecutor>(2));
 
 void setup() {
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);  // disable brownout detector
