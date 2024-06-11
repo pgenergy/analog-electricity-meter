@@ -28,7 +28,8 @@
 
 #include <WiFiClientSecure.h>
 
-#include <Energyleaf/Energyleaf.pb.h>
+#include <Energyleaf.pb.h>
+
 #include <Energyleaf/Energyleaf.error.h>
 #include <Energyleaf/Energyleaf.cert.h>
 #include <pb_decode.h>
