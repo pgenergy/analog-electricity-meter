@@ -101,7 +101,7 @@ void setup() {
 
     Energyleaf::Stream::Constants::Settings::uint8_tCreator.setCreator(std::make_unique<PSRAMCreator<std::uint8_t>>());
 
-    auto camerasourcelink = plan.createLink(Energyleaf::Stream::V1::Link::make_SourceLinkUPtr<Energyleaf::Stream::V1::Core::Operator::SourceOperator::CameraSourceOperator<CameraEL>>());
+    auto camerasourcelink = plan.createSource<Energyleaf::Stream::V1::Core::Operator::SourceOperator::CameraSourceOperator<CameraEL>>();
     
     camera_config_t vConfig;
     vConfig.ledc_channel = LEDC_CHANNEL_0;
@@ -140,15 +140,15 @@ void setup() {
 
     camerasourcelink->getOperator().setCameraConfig(vConfig);
     camerasourcelink->getOperator().start();
-    auto enrichRequest = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::EnrichPipeOperator<Sensor::Enricher::Token>>());
+    auto enrichRequest = plan.createPipe<Energyleaf::Stream::V1::Core::Operator::PipeOperator::EnrichPipeOperator<Sensor::Enricher::Token>>();
     enrichRequest->getOperator().getEnricher().getSender()->setHost("admin.energyleaf.de");
     enrichRequest->getOperator().getEnricher().getSender()->setPort(443);
-    auto pipelink2 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::CropPipeOperator>());
+    auto pipelink2 = plan.createPipe<Energyleaf::Stream::V1::Core::Operator::PipeOperator::CropPipeOperator>();
     pipelink2->getOperator().setSize(120, 60, 0, 240);
-    auto pipelink3 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::DetectorPipeOperator>());
+    auto pipelink3 = plan.createPipe<Energyleaf::Stream::V1::Core::Operator::PipeOperator::DetectorPipeOperator>();
     pipelink3->getOperator().setLowerBorder(Energyleaf::Stream::V1::Types::Pixel::HSV(90.f,50.f,70.f));
     pipelink3->getOperator().setHigherBorder(Energyleaf::Stream::V1::Types::Pixel::HSV(128.f,255.f,255.f));
-    auto pipelink4 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::SelectPipeOperator>());
+    auto pipelink4 = plan.createPipe<Energyleaf::Stream::V1::Core::Operator::PipeOperator::SelectPipeOperator>();
     //pipelink4->getOperator().setThreshold(300);//Expression
     auto *ti = new Energyleaf::Stream::V1::Expression::DataType::DtSizeTExpression("FOUNDPIXEL");
     auto *cv = new Energyleaf::Stream::V1::Expression::DataType::DtSizeTExpression(300);
@@ -157,11 +157,11 @@ void setup() {
     comp->add(cv);
     comp->setCompareType(Energyleaf::Stream::V1::Expression::Compare::CompareTypes::GREATER_THAN);
     pipelink4->getOperator().setExpression(comp);
-    auto pipelink5 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::StatePipeOperator>());
+    auto pipelink5 = plan.createPipe<Energyleaf::Stream::V1::Core::Operator::PipeOperator::StatePipeOperator>();
     pipelink5->getOperator().setState(false);
-    auto pipelink6 = plan.createLink(Energyleaf::Stream::V1::Link::make_PipeLinkUPtr<Energyleaf::Stream::V1::Core::Operator::PipeOperator::CalculatorPipeOperator>());
+    auto pipelink6 = plan.createPipe<Energyleaf::Stream::V1::Core::Operator::PipeOperator::CalculatorPipeOperator>();
     pipelink6->getOperator().setRotationPerKWh(375);
-    auto websink = plan.createLink(Energyleaf::Stream::V1::Link::make_SinkLinkUPtr<Energyleaf::Stream::V1::Core::Operator::SinkOperator::SenderSinkOperator<Sensor::Sender::Power>>());
+    auto websink = plan.createSink<Energyleaf::Stream::V1::Core::Operator::SinkOperator::SenderSinkOperator<Sensor::Sender::Power>>();
     websink.get()->getOperator().getSender().setSender(enrichRequest.get()->getOperator().getEnricher());
     
     plan.connect(camerasourcelink,enrichRequest);
