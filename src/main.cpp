@@ -171,12 +171,14 @@ void setup() {
     plan.connect(pipelink4,pipelink5);
     plan.connect(pipelink5,pipelink6);
     plan.connect(pipelink6,websink);
+    plan.order();
 }
 
 void loop() {
     ArduinoOTA.handle();
     try {
-        plan.process();
+        //plan.process();
+        plan.processOrdered();
     } catch (std::runtime_error &error) {
         log_d("Error: %s", error.what());
     }
