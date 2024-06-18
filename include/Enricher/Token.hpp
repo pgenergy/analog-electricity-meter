@@ -32,6 +32,7 @@ namespace Sensor::Enricher {
             if(this->getSender()->request()) {
                 //If we got a new token or the old one is not expired from our side, we continue
                 outputTuple = inputTuple;
+                outputTuple.addItem(std::string("RotationKWH"),Energyleaf::Stream::V1::Types::Datatype::DtInt(this->getSender()->getRotation()));
                 return true;
             } else {
                 //If we cant get a new token because the old one is expired from our side, we break
