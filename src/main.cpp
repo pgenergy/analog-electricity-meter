@@ -24,6 +24,7 @@
 #include "Core/Operator/PipeOperator/CalculatorPipeOperator/CalculatorPipeOperator.hpp"
 #include "Core/Operator/PipeOperator/EnrichPipeOperator/EnrichPipeOperator.hpp"
 #include "Core/Operator/SinkOperator/SenderSinkOperator/SenderSinkOperator.hpp"
+#include "Enricher/TokenEnrichOperator.hpp"
 #include "Enricher/Token.hpp"
 #include "Sender/Power.hpp"
 #include "CameraEL.hpp"
@@ -141,7 +142,7 @@ void setup() {
 
     camerasourcelink->getOperator().setCameraConfig(vConfig);
     camerasourcelink->getOperator().start();
-    auto enrichRequest = plan.createPipe<Energyleaf::Stream::V1::Core::Operator::PipeOperator::EnrichPipeOperator<Sensor::Enricher::Token>>();
+    auto enrichRequest = plan.createPipe<Sensor::Enricher::TokenEnrichPipeOperator>();
     enrichRequest->getOperator().getEnricher().getSender()->setHost("admin.energyleaf.de");
     enrichRequest->getOperator().getEnricher().getSender()->setPort(443);
     auto pipelink2 = plan.createPipe<Energyleaf::Stream::V1::Core::Operator::PipeOperator::CropPipeOperator>();
