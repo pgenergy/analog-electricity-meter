@@ -173,7 +173,7 @@ namespace Sensor::WebSender {
             uint8_t retryCounter = 0;
             uint8_t manualMaxCounter = ENERGYLEAF_MANUALCOUNTER;
             uint8_t manualCurrentCounter = ENERGYLEAF_MANUALCOUNTER;
-            uint32_t rotation = 0;
+            uint32_t rotation = 0;//375; ToDo: remove if send by service
             WiFiClientSecure *client;
             float value = 0.f;
             bool active;
