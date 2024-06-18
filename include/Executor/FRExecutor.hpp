@@ -23,13 +23,14 @@ namespace Sensor::Executor {
         FRExecutor() : FRExecutor(2) {
         }
 
+        //Use with care, as this implementation needs a stack size already set. In this project the stl based implementation is used.
         explicit FRExecutor(std::size_t numThreads) : numThreads(numThreads), numTasksInProgress(0) {
             this->queueMutex = xSemaphoreCreateMutex();
             this->taskSemaphore = xSemaphoreCreateCounting(this->numThreads, 0);
 
             for (std::size_t i = 0; i < this->numThreads; ++i) {
                 TaskHandle_t handle;
-                xTaskCreate(&FRExecutor::taskRunner, "energyleaf_runner", 2048, this, 1, &handle);
+                xTaskCreate(&FRExecutor::taskRunner, "energyleaf_runner", 4096, this, 1, &handle);
                 this->taskHandles.push_back(handle);
             }
         }

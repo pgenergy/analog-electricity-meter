@@ -57,7 +57,7 @@ class CameraEL : public Energyleaf::Stream::V1::Extras::Vision::AbstractCamera<c
         }
         Energyleaf::Stream::V1::Types::Image getInternalImage() const override {
             camera_fb_t* framebuffer = esp_camera_fb_get();
-             if (!framebuffer) {
+            if (!framebuffer) {
                 throw std::runtime_error("Camera capture failed!");
             } else {
                 bool validJpeg = false;

@@ -35,7 +35,7 @@ namespace Sensor::Sender {
             if(items.find("Power") != items.end()) {
                 auto power = inputTuple.getItem<Energyleaf::Stream::V1::Types::Datatype::DtFloat>("Power");
 
-                        log_i("Deb: %f",power.toFloat());
+                log_i("Debug Power-Value: %f",power.toFloat());
                 return this->getSender()->send(power.toFloat());
             } else {
                 return false;
