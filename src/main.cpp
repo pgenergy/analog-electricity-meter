@@ -160,7 +160,7 @@ void setup() {
     auto pipelink5 = plan.createPipe<Energyleaf::Stream::V1::Core::Operator::PipeOperator::StatePipeOperator>();
     pipelink5->getOperator().setState(false);
     auto pipelink6 = plan.createPipe<Energyleaf::Stream::V1::Core::Operator::PipeOperator::CalculatorPipeOperator>();
-    pipelink6->getOperator().setRotationPerKWh(375);
+    //pipelink6->getOperator().setRotationPerKWh(375);
     auto websink = plan.createSink<Energyleaf::Stream::V1::Core::Operator::SinkOperator::SenderSinkOperator<Sensor::Sender::Power>>();
     websink.get()->getOperator().getSender().setSender(enrichRequest.get()->getOperator().getEnricher());
     

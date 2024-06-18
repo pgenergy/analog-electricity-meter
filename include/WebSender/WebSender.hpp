@@ -160,6 +160,10 @@ namespace Sensor::WebSender {
             const char *getAccessToken() const {
                 return this->accessToken;
             }
+
+            uint32_t getRotation() {
+                return this->rotation;
+            }
         private:
             char *host;
             uint16_t port; 
@@ -169,6 +173,7 @@ namespace Sensor::WebSender {
             uint8_t retryCounter = 0;
             uint8_t manualMaxCounter = ENERGYLEAF_MANUALCOUNTER;
             uint8_t manualCurrentCounter = ENERGYLEAF_MANUALCOUNTER;
+            uint32_t rotation = 0;
             WiFiClientSecure *client;
             float value = 0.f;
             bool active;
@@ -579,6 +584,9 @@ namespace Sensor::WebSender {
                                 this->accessToken = new char[strlen(tokenResponse.access_token) + 1];
                                 strcpy(this->accessToken, tokenResponse.access_token);
                                 this->expiresIn = tokenResponse.expires_in;
+                                if(tokenResponse.has_analog_rotation_per_kwh) {
+                                    this->rotation = tokenResponse.analog_rotation_per_kwh;
+                                }
 
                                 this->client->stop(); 
                                 return ENERGYLEAF_ERROR::NO_ERROR;
