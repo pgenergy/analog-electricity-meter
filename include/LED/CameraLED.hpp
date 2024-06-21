@@ -1,15 +1,11 @@
-//
-// Created by SlepiK on 30.01.24.
-//
-
-#ifndef ENERGYLEAF_STREAM_V1_EXTRAS_DEVICE_ESP_LED_CAMERALED_HPP
-#define ENERGYLEAF_STREAM_V1_EXTRAS_DEVICE_ESP_LED_CAMERALED_HPP
+#ifndef ENERGYLEAF_SENSOR_LED_CAMERALED_HPP
+#define ENERGYLEAF_SENSOR_LED_CAMERALED_HPP
 
 #include "AbstractLED.hpp"
 
 namespace LED {
     class CameraLED : public AbstractLED {
-    public:
+        public:
         CameraLED(std::uint8_t pin, std::uint8_t channel, std::uint32_t duty)
                 : AbstractLED(pin), vChannel(channel), vDuty(duty) {
             ledcSetup(this->vChannel, 5000, 8);
@@ -29,7 +25,7 @@ namespace LED {
             return this->vDuty;
         }
 
-    private:
+        private:
         const std::uint8_t vChannel;
         std::uint32_t vDuty;
         static constexpr int CONFIG_LED_MAX_INTENSITY = 255;
@@ -45,4 +41,4 @@ namespace LED {
     };
 }
 
-#endif //ENERGYLEAF_STREAM_V1_EXTRAS_DEVICE_ESP_LED_CAMERALED_HPP
+#endif //ENERGYLEAF_SENSOR_LED_CAMERALED_HPP

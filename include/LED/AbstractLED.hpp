@@ -1,16 +1,12 @@
-//
-// Created by SlepiK on 30.01.24.
-//
-
-#ifndef ENERGYLEAF_STREAM_V1_EXTRAS_DEVICE_ESP_LED_ABSTRACTLED_HPP
-#define ENERGYLEAF_STREAM_V1_EXTRAS_DEVICE_ESP_LED_ABSTRACTLED_HPP
+#ifndef ENERGYLEAF_SENSOR_LED_ABSTRACTLED_HPP
+#define ENERGYLEAF_SENSOR_LED_ABSTRACTLED_HPP
 
 #include <cstdint>
 #include <esp32-hal-gpio.h>
 
 namespace LED {
     class AbstractLED {
-    public:
+        public:
         explicit AbstractLED(std::uint8_t vPin) : vPin(vPin), vEnable(false) {
         }
 
@@ -32,8 +28,7 @@ namespace LED {
             return this->vPin;
         }
 
-    private:
-    protected:
+        protected:
         const std::uint8_t vPin;
         bool vEnable;
 
@@ -41,4 +36,4 @@ namespace LED {
     };
 }
 
-#endif //ENERGYLEAF_STREAM_V1_EXTRAS_DEVICE_ESP_LED_ABSTRACTLED_HPP
+#endif //ENERGYLEAF_SENSOR_LED_ABSTRACTLED_HPP

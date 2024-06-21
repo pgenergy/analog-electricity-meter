@@ -1,23 +1,18 @@
-//
-// Created by SlepiK on 09.06.24.
-//
+#ifndef ENERGYLEAF_SENSOR_EXECUTOR_FREXECUTOR_HPP
+#define ENERGYLEAF_SENSOR_EXECUTOR_FREXECUTOR_HPP
 
-#ifndef SENSOR_EXECUTOR_FREXECUTOR_HPP
-#define SENSOR_EXECUTOR_FREXECUTOR_HPP
-
-#include "Core/Executor/IExecutor.hpp"
 #include <atomic>
 #include <mutex>
 #include <condition_variable>
 #include <vector>
 #include <queue>
-
 #include <Arduino.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <freertos/semphr.h>
+#include "Core/Executor/IExecutor.hpp"
 
-namespace Sensor::Executor {
+namespace Executor {
     class FRExecutor : public Apalinea::Core::Executor::IExecutor {
     public:
         FRExecutor() : FRExecutor(2) {
@@ -117,4 +112,4 @@ namespace Sensor::Executor {
     };
 }
 
-#endif //SENSOR_EXECUTOR_FREXECUTOR_HPP
+#endif //ENERGYLEAF_SENSOR_EXECUTOR_FREXECUTOR_HPP

@@ -1,20 +1,15 @@
 #include <Arduino.h>
-#include <ArduinoOTA.h>
 #include <WiFi.h>
 #include <fb_gfx.h>
-
 #include <WiFiManager.h> 
-
 #include <cstring>
 #include <deque>
-
 #include "esp_camera.h"
 #include "esp_http_server.h"
 #include "esp_log.h"
 #include "soc/rtc_cntl_reg.h"  //disable brownout problems
 #include "soc/soc.h"           //disable brownout problems
 #include "time.h"
-
 #include "Core/Plan/Plan.hpp"
 #include "Operator/SourceOperator/CameraSourceOperator/CameraSourceOperator.hpp"
 #include "Operator/PipeOperator/CropPipeOperator/CropPipeOperator.hpp"
@@ -28,22 +23,17 @@
 #include "Enricher/Token.hpp"
 #include "Sender/Power.hpp"
 #include "CameraEL.hpp"
-#include <Core/Constants/Settings.hpp>
+#include "Core/Constants/Settings.hpp"
 #include "PSRAMCreator.hpp"
-#include <Expression/Datatype/DtSizeTExpression.hpp>
-#include <Expression/ToExpression/ToDtBoolExpression.hpp>
-#include <Expression/Compare/CompareExpression.hpp>
+#include "Expression/Datatype/DtSizeTExpression.hpp"
+#include "Expression/ToExpression/ToDtBoolExpression.hpp"
+#include "Expression/Compare/CompareExpression.hpp"
 #include "Executor/FRExecutor.hpp"
-#include <Core/Executor/STLExecutor.hpp>
+#include "Core/Executor/STLExecutor.hpp"
 
-SET_LOOP_TASK_STACK_SIZE(16 * 1024);  // 16KB
+SET_LOOP_TASK_STACK_SIZE(16 * 1024);
 
-constexpr bool USE_WEBSERVER = false;
-
-static const uint32_t UPDATE_INTERVAL = 50;
-const char *otaPassword = "energyleaf";
-
-const char *ntpServer = "pool.ntp.org";  // Recode to use TZ
+const char *ntpServer = "pool.ntp.org";
 const long gmtOffset_sec = 3600;
 const int daylightOffset_sec = 0;
 
@@ -65,38 +55,6 @@ void setup() {
     wifiManager.autoConnect("Energyleaf_Sensor");
 
     configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
-
-    ArduinoOTA
-        .onStart([]() {
-            String type;
-            if (ArduinoOTA.getCommand() == U_FLASH)
-                type = "sketch";
-            else  // U_SPIFFS
-                type = "filesystem";
-
-            Serial.println("Start updating " + type);
-            esp_camera_deinit();
-        })
-        .onEnd([]() { Serial.println("\nEnd"); })
-        .onProgress([](unsigned int progress, unsigned int total) {
-            Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-        })
-        .onError([](ota_error_t error) {
-            Serial.printf("Error[%u]: ", error);
-            if (error == OTA_AUTH_ERROR)
-                Serial.println("Auth Failed");
-            else if (error == OTA_BEGIN_ERROR)
-                Serial.println("Begin Failed");
-            else if (error == OTA_CONNECT_ERROR)
-                Serial.println("Connect Failed");
-            else if (error == OTA_RECEIVE_ERROR)
-                Serial.println("Receive Failed");
-            else if (error == OTA_END_ERROR)
-                Serial.println("End Failed");
-        });
-
-    ArduinoOTA.setPassword(otaPassword);
-    ArduinoOTA.begin();
 
     Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
@@ -128,21 +86,21 @@ void setup() {
     vConfig.pixel_format = PIXFORMAT_JPEG;
     vConfig.grab_mode = CAMERA_GRAB_LATEST;
 
-        if (psramFound()) {
-            vConfig.frame_size = FRAMESIZE_QVGA;
-            vConfig.jpeg_quality = 10;
-            vConfig.fb_count = 2;
-            vConfig.fb_location = CAMERA_FB_IN_PSRAM;
-        } else {
-            vConfig.frame_size = FRAMESIZE_QVGA;
-            vConfig.jpeg_quality = 12;
-            vConfig.fb_count = 1;
-            vConfig.fb_location = CAMERA_FB_IN_DRAM;
-        }
+    if (psramFound()) {
+        vConfig.frame_size = FRAMESIZE_QVGA;
+        vConfig.jpeg_quality = 10;
+        vConfig.fb_count = 2;
+        vConfig.fb_location = CAMERA_FB_IN_PSRAM;
+    } else {
+        vConfig.frame_size = FRAMESIZE_QVGA;
+        vConfig.jpeg_quality = 12;
+        vConfig.fb_count = 1;
+        vConfig.fb_location = CAMERA_FB_IN_DRAM;
+    }
 
     camerasourcelink->getOperator().setCameraConfig(vConfig);
     camerasourcelink->getOperator().start();
-    auto enrichRequest = plan.createPipe<Sensor::Enricher::TokenEnrichPipeOperator>();
+    auto enrichRequest = plan.createPipe<Enricher::TokenEnrichPipeOperator>();
     enrichRequest->getOperator().getEnricher().getSender()->setHost("admin.energyleaf.de");
     enrichRequest->getOperator().getEnricher().getSender()->setPort(443);
     auto pipelink2 = plan.createPipe<Apalinea::Operator::PipeOperator::CropPipeOperator>();
@@ -151,7 +109,6 @@ void setup() {
     pipelink3->getOperator().setLowerBorder(Apalinea::Core::Type::Pixel::HSV(90.f,50.f,70.f));
     pipelink3->getOperator().setHigherBorder(Apalinea::Core::Type::Pixel::HSV(128.f,255.f,255.f));
     auto pipelink4 = plan.createPipe<Apalinea::Operator::PipeOperator::SelectPipeOperator>();
-    //pipelink4->getOperator().setThreshold(300);//Expression
     auto *ti = new Apalinea::Expression::DataType::DtSizeTExpression("FOUNDPIXEL");
     auto *cv = new Apalinea::Expression::DataType::DtSizeTExpression(300);
     auto *comp = new Apalinea::Expression::Compare::CompareExpression();
@@ -162,8 +119,7 @@ void setup() {
     auto pipelink5 = plan.createPipe<Apalinea::Operator::PipeOperator::StatePipeOperator>();
     pipelink5->getOperator().setState(false);
     auto pipelink6 = plan.createPipe<Apalinea::Operator::PipeOperator::CalculatorPipeOperator>();
-    //pipelink6->getOperator().setRotationPerKWh(375);
-    auto websink = plan.createSink<Apalinea::Operator::SinkOperator::SenderSinkOperator<Sensor::Sender::Power>>();
+    auto websink = plan.createSink<Apalinea::Operator::SinkOperator::SenderSinkOperator<Sender::Power>>();
     websink.get()->getOperator().getSender().setSender(enrichRequest.get()->getOperator().getEnricher());
     
     plan.connect(camerasourcelink,enrichRequest);
@@ -177,9 +133,7 @@ void setup() {
 }
 
 void loop() {
-    ArduinoOTA.handle();
     try {
-        //plan.process();
         plan.processOrdered();
         plan.join();
     } catch (std::runtime_error &error) {

@@ -1,29 +1,25 @@
-//
-// Created by SlepiK on 02.02.2024.
-//
-
-#ifndef SENSOR_SENDER_POWER_HPP
-#define SENSOR_SENDER_POWER_HPP
+#ifndef ENERGYLEAF_SENSOR_POWER_HPP
+#define ENERGYLEAF_SENSOR_POWER_HPP
 
 #include "Operator/SinkOperator/SenderSinkOperator/AbstractSender.hpp"
 #include "Extras/Network/WebSender/AbstractWebSender.hpp"
 #include "WebSender/WebSender.hpp"
 #include "Core/Type/Datatype/DtFloat.hpp"
 
-namespace Sensor::Sender {
+namespace Sender {
     class Power :   public Apalinea::Operator::SinkOperator::AbstractSender,
-                    public Apalinea::Extras::Network::AbstractWebSender<Sensor::WebSender::WebSender> {
+                    public Apalinea::Extras::Network::AbstractWebSender<WebSender::WebSender> {
     public:
         explicit Power() : AbstractSender(), AbstractWebSender() {
         }
 
-        explicit Power(Sensor::WebSender::WebSender *client) : AbstractSender(), AbstractWebSender(client) {
+        explicit Power(WebSender::WebSender *client) : AbstractSender(), AbstractWebSender(client) {
         }
 
-        explicit Power(Sensor::Sender::Power& other) :  AbstractSender(), AbstractWebSender(other.getSender()) {
+        explicit Power(Sender::Power& other) :  AbstractSender(), AbstractWebSender(other.getSender()) {
         }
 
-        explicit Power(Sensor::Sender::Power&& other) noexcept :    AbstractSender(), AbstractWebSender(std::move(other.getSender())) {
+        explicit Power(Sender::Power&& other) noexcept :    AbstractSender(), AbstractWebSender(std::move(other.getSender())) {
         }
 
         ~Power() = default;
@@ -39,9 +35,7 @@ namespace Sensor::Sender {
                 return false;
             }
         }
-    private:
-    protected:
     };
 }
 
-#endif
+#endif //ENERGYLEAF_SENSOR_POWER_HPP
