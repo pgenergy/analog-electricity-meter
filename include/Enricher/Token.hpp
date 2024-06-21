@@ -5,14 +5,13 @@
 #ifndef SENSOR_ENRICHER_TOKEN_HPP
 #define SENSOR_ENRICHER_TOKEN_HPP
 
-#include <Core/Operator/PipeOperator/EnrichPipeOperator/AbstractEnricher.hpp>
-#include <Extras/Network/WebSender/AbstractWebSender.hpp>
-
-#include <WebSender/WebSender.hpp>
+#include "Operator/PipeOperator/EnrichPipeOperator/AbstractEnricher.hpp"
+#include "Extras/Network/WebSender/AbstractWebSender.hpp"
+#include "WebSender/WebSender.hpp"
 
 namespace Sensor::Enricher {
-    class Token :   public Energyleaf::Stream::V1::Core::Operator::PipeOperator::AbstractEnricher, 
-                    public Energyleaf::Stream::V1::Extras::Network::AbstractWebSender<Sensor::WebSender::WebSender> {
+    class Token :   public Apalinea::Operator::PipeOperator::AbstractEnricher, 
+                    public Apalinea::Extras::Network::AbstractWebSender<Sensor::WebSender::WebSender> {
     public:
         explicit Token() : AbstractEnricher(), AbstractWebSender() {
         }
@@ -28,11 +27,11 @@ namespace Sensor::Enricher {
 
         ~Token() = default;
 
-        bool work(Energyleaf::Stream::V1::Tuple::Tuple &inputTuple, Energyleaf::Stream::V1::Tuple::Tuple& outputTuple) override {
+        bool work(Apalinea::Core::Tuple::Tuple &inputTuple, Apalinea::Core::Tuple::Tuple& outputTuple) override {
             if(this->getSender()->request()) {
                 //If we got a new token or the old one is not expired from our side, we continue
                 outputTuple = inputTuple;
-                outputTuple.addItem(std::string("RotationKWH"),Energyleaf::Stream::V1::Types::Datatype::DtInt(this->getSender()->getRotation()));
+                outputTuple.addItem(std::string("RotationKWH"),Apalinea::Core::Type::Datatype::DtInt(this->getSender()->getRotation()));
                 return true;
             } else {
                 //If we cant get a new token because the old one is expired from our side, we break

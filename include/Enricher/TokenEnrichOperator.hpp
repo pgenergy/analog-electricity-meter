@@ -6,13 +6,13 @@
 #define SENSOR_ENRICHER_TOKENENRICHER_HPP
 
 #include "Token.hpp"
-#include "Core/Operator/PipeOperator/EnrichPipeOperator/EnrichPipeOperator.hpp"
+#include "Operator/PipeOperator/EnrichPipeOperator/EnrichPipeOperator.hpp"
 
 namespace Sensor::Enricher {
-    class TokenEnrichPipeOperator : public Energyleaf::Stream::V1::Core::Operator::PipeOperator::EnrichPipeOperator<Token> {
+    class TokenEnrichPipeOperator : public Apalinea::Operator::PipeOperator::EnrichPipeOperator<Token> {
     public:
-        [[nodiscard]] Energyleaf::Stream::V1::Operator::OperatorMode getOperatorMode() const override {
-            return Energyleaf::Stream::V1::Operator::OperatorMode::MAIN;
+        [[nodiscard]] Apalinea::Core::Operator::OperatorMode getOperatorMode() const override {
+            return Apalinea::Core::Operator::OperatorMode::MAIN;
         }
     };
 }

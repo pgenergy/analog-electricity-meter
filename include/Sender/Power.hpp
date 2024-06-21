@@ -5,16 +5,14 @@
 #ifndef SENSOR_SENDER_POWER_HPP
 #define SENSOR_SENDER_POWER_HPP
 
-#include <Core/Operator/SinkOperator/SenderSinkOperator/AbstractSender.hpp>
-#include <Extras/Network/WebSender/AbstractWebSender.hpp>
-
-#include <WebSender/WebSender.hpp>
-
-#include <Types/Datatype/DtFloat.hpp>
+#include "Operator/SinkOperator/SenderSinkOperator/AbstractSender.hpp"
+#include "Extras/Network/WebSender/AbstractWebSender.hpp"
+#include "WebSender/WebSender.hpp"
+#include "Core/Type/Datatype/DtFloat.hpp"
 
 namespace Sensor::Sender {
-    class Power :   public Energyleaf::Stream::V1::Core::Operator::SinkOperator::AbstractSender,
-                    public Energyleaf::Stream::V1::Extras::Network::AbstractWebSender<Sensor::WebSender::WebSender> {
+    class Power :   public Apalinea::Operator::SinkOperator::AbstractSender,
+                    public Apalinea::Extras::Network::AbstractWebSender<Sensor::WebSender::WebSender> {
     public:
         explicit Power() : AbstractSender(), AbstractWebSender() {
         }
@@ -30,10 +28,10 @@ namespace Sensor::Sender {
 
         ~Power() = default;
 
-        bool work(Energyleaf::Stream::V1::Tuple::Tuple &inputTuple) override {
+        bool work(Apalinea::Core::Tuple::Tuple &inputTuple) override {
             auto items = inputTuple.getItems();
             if(items.find("Power") != items.end()) {
-                auto power = inputTuple.getItem<Energyleaf::Stream::V1::Types::Datatype::DtFloat>("Power");
+                auto power = inputTuple.getItem<Apalinea::Core::Type::Datatype::DtFloat>("Power");
 
                 log_i("Debug Power-Value: %f",power.toFloat());
                 return this->getSender()->send(power.toFloat());
