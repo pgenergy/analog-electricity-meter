@@ -1,19 +1,15 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <fb_gfx.h>
-
 #include <WiFiManager.h> 
-
 #include <cstring>
 #include <deque>
-
 #include "esp_camera.h"
 #include "esp_http_server.h"
 #include "esp_log.h"
 #include "soc/rtc_cntl_reg.h"  //disable brownout problems
 #include "soc/soc.h"           //disable brownout problems
 #include "time.h"
-
 #include "Core/Plan/Plan.hpp"
 #include "Operator/SourceOperator/CameraSourceOperator/CameraSourceOperator.hpp"
 #include "Operator/PipeOperator/CropPipeOperator/CropPipeOperator.hpp"
@@ -27,13 +23,13 @@
 #include "Enricher/Token.hpp"
 #include "Sender/Power.hpp"
 #include "CameraEL.hpp"
-#include <Core/Constants/Settings.hpp>
+#include "Core/Constants/Settings.hpp"
 #include "PSRAMCreator.hpp"
-#include <Expression/Datatype/DtSizeTExpression.hpp>
-#include <Expression/ToExpression/ToDtBoolExpression.hpp>
-#include <Expression/Compare/CompareExpression.hpp>
+#include "Expression/Datatype/DtSizeTExpression.hpp"
+#include "Expression/ToExpression/ToDtBoolExpression.hpp"
+#include "Expression/Compare/CompareExpression.hpp"
 #include "Executor/FRExecutor.hpp"
-#include <Core/Executor/STLExecutor.hpp>
+#include "Core/Executor/STLExecutor.hpp"
 
 SET_LOOP_TASK_STACK_SIZE(16 * 1024);
 
