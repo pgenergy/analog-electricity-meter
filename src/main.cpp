@@ -15,15 +15,16 @@
 #include "soc/soc.h"           //disable brownout problems
 #include "time.h"
 
-#include <Core/Plan/Plan.hpp>
-#include <Core/Operator/SourceOperator/CameraSourceOperator/CameraSourceOperator.hpp>
-#include <Core/Operator/PipeOperator/CropPipeOperator/CropPipeOperator.hpp>
-#include "Core/Operator/PipeOperator/DetectorPipeOperator/DetectorPipeOperator.hpp"
-#include "Core/Operator/PipeOperator/StatePipeOperator/StatePipeOperator.hpp"
-#include "Core/Operator/PipeOperator/SelectPipeOperator/SelectPipeOperator.hpp"
-#include "Core/Operator/PipeOperator/CalculatorPipeOperator/CalculatorPipeOperator.hpp"
-#include "Core/Operator/PipeOperator/EnrichPipeOperator/EnrichPipeOperator.hpp"
-#include "Core/Operator/SinkOperator/SenderSinkOperator/SenderSinkOperator.hpp"
+#include "Core/Plan/Plan.hpp"
+#include "Operator/SourceOperator/CameraSourceOperator/CameraSourceOperator.hpp"
+#include "Operator/PipeOperator/CropPipeOperator/CropPipeOperator.hpp"
+#include "Operator/PipeOperator/DetectorPipeOperator/DetectorPipeOperator.hpp"
+#include "Operator/PipeOperator/StatePipeOperator/StatePipeOperator.hpp"
+#include "Operator/PipeOperator/SelectPipeOperator/SelectPipeOperator.hpp"
+#include "Operator/PipeOperator/CalculatorPipeOperator/CalculatorPipeOperator.hpp"
+#include "Operator/PipeOperator/EnrichPipeOperator/EnrichPipeOperator.hpp"
+#include "Operator/SinkOperator/SenderSinkOperator/SenderSinkOperator.hpp"
+#include "Enricher/TokenEnrichOperator.hpp"
 #include "Enricher/Token.hpp"
 #include "Sender/Power.hpp"
 #include "CameraEL.hpp"
@@ -46,7 +47,7 @@ const char *ntpServer = "pool.ntp.org";  // Recode to use TZ
 const long gmtOffset_sec = 3600;
 const int daylightOffset_sec = 0;
 
-Energyleaf::Stream::V1::Core::Plan::Plan plan(std::make_shared<Energyleaf::Stream::V1::Core::Executor::STLExecutor>(2));
+Apalinea::Core::Plan::Plan plan(std::make_shared<Apalinea::Core::Executor::STLExecutor>(2));
 
 void setup() {
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);  // disable brownout detector
@@ -100,9 +101,9 @@ void setup() {
     Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
 
-    Energyleaf::Stream::Constants::Settings::uint8_tCreator.setCreator(std::make_unique<PSRAMCreator<std::uint8_t>>());
+    Apalinea::Core::Constants::Settings::uint8_tCreator.setCreator(std::make_unique<PSRAMCreator<std::uint8_t>>());
 
-    auto camerasourcelink = plan.createSource<Energyleaf::Stream::V1::Core::Operator::SourceOperator::CameraSourceOperator<CameraEL>>();
+    auto camerasourcelink = plan.createSource<Apalinea::Operator::SourceOperator::CameraSourceOperator<CameraEL>>();
     
     camera_config_t vConfig;
     vConfig.ledc_channel = LEDC_CHANNEL_0;
@@ -141,28 +142,28 @@ void setup() {
 
     camerasourcelink->getOperator().setCameraConfig(vConfig);
     camerasourcelink->getOperator().start();
-    auto enrichRequest = plan.createPipe<Energyleaf::Stream::V1::Core::Operator::PipeOperator::EnrichPipeOperator<Sensor::Enricher::Token>>();
+    auto enrichRequest = plan.createPipe<Sensor::Enricher::TokenEnrichPipeOperator>();
     enrichRequest->getOperator().getEnricher().getSender()->setHost("admin.energyleaf.de");
     enrichRequest->getOperator().getEnricher().getSender()->setPort(443);
-    auto pipelink2 = plan.createPipe<Energyleaf::Stream::V1::Core::Operator::PipeOperator::CropPipeOperator>();
+    auto pipelink2 = plan.createPipe<Apalinea::Operator::PipeOperator::CropPipeOperator>();
     pipelink2->getOperator().setSize(120, 60, 0, 240);
-    auto pipelink3 = plan.createPipe<Energyleaf::Stream::V1::Core::Operator::PipeOperator::DetectorPipeOperator>();
-    pipelink3->getOperator().setLowerBorder(Energyleaf::Stream::V1::Types::Pixel::HSV(90.f,50.f,70.f));
-    pipelink3->getOperator().setHigherBorder(Energyleaf::Stream::V1::Types::Pixel::HSV(128.f,255.f,255.f));
-    auto pipelink4 = plan.createPipe<Energyleaf::Stream::V1::Core::Operator::PipeOperator::SelectPipeOperator>();
+    auto pipelink3 = plan.createPipe<Apalinea::Operator::PipeOperator::DetectorPipeOperator>();
+    pipelink3->getOperator().setLowerBorder(Apalinea::Core::Type::Pixel::HSV(90.f,50.f,70.f));
+    pipelink3->getOperator().setHigherBorder(Apalinea::Core::Type::Pixel::HSV(128.f,255.f,255.f));
+    auto pipelink4 = plan.createPipe<Apalinea::Operator::PipeOperator::SelectPipeOperator>();
     //pipelink4->getOperator().setThreshold(300);//Expression
-    auto *ti = new Energyleaf::Stream::V1::Expression::DataType::DtSizeTExpression("FOUNDPIXEL");
-    auto *cv = new Energyleaf::Stream::V1::Expression::DataType::DtSizeTExpression(300);
-    auto *comp = new Energyleaf::Stream::V1::Expression::Compare::CompareExpression();
+    auto *ti = new Apalinea::Expression::DataType::DtSizeTExpression("FOUNDPIXEL");
+    auto *cv = new Apalinea::Expression::DataType::DtSizeTExpression(300);
+    auto *comp = new Apalinea::Expression::Compare::CompareExpression();
     comp->add(ti);
     comp->add(cv);
-    comp->setCompareType(Energyleaf::Stream::V1::Expression::Compare::CompareTypes::GREATER_THAN);
+    comp->setCompareType(Apalinea::Expression::Compare::CompareTypes::GREATER_THAN);
     pipelink4->getOperator().setExpression(comp);
-    auto pipelink5 = plan.createPipe<Energyleaf::Stream::V1::Core::Operator::PipeOperator::StatePipeOperator>();
+    auto pipelink5 = plan.createPipe<Apalinea::Operator::PipeOperator::StatePipeOperator>();
     pipelink5->getOperator().setState(false);
-    auto pipelink6 = plan.createPipe<Energyleaf::Stream::V1::Core::Operator::PipeOperator::CalculatorPipeOperator>();
+    auto pipelink6 = plan.createPipe<Apalinea::Operator::PipeOperator::CalculatorPipeOperator>();
     //pipelink6->getOperator().setRotationPerKWh(375);
-    auto websink = plan.createSink<Energyleaf::Stream::V1::Core::Operator::SinkOperator::SenderSinkOperator<Sensor::Sender::Power>>();
+    auto websink = plan.createSink<Apalinea::Operator::SinkOperator::SenderSinkOperator<Sensor::Sender::Power>>();
     websink.get()->getOperator().getSender().setSender(enrichRequest.get()->getOperator().getEnricher());
     
     plan.connect(camerasourcelink,enrichRequest);

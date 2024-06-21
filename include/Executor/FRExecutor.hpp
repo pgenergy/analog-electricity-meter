@@ -5,7 +5,7 @@
 #ifndef SENSOR_EXECUTOR_FREXECUTOR_HPP
 #define SENSOR_EXECUTOR_FREXECUTOR_HPP
 
-#include <Core/Executor/IExecutor.hpp>
+#include "Core/Executor/IExecutor.hpp"
 #include <atomic>
 #include <mutex>
 #include <condition_variable>
@@ -18,7 +18,7 @@
 #include <freertos/semphr.h>
 
 namespace Sensor::Executor {
-    class FRExecutor : public Energyleaf::Stream::V1::Core::Executor::IExecutor {
+    class FRExecutor : public Apalinea::Core::Executor::IExecutor {
     public:
         FRExecutor() : FRExecutor(2) {
         }

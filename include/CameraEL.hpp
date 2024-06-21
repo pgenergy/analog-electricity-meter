@@ -1,13 +1,13 @@
 #ifndef ENERGYLEAF_V1_SOURCE_CAMERAEL_HPP
 #define ENERGYLEAF_V1_SOURCE_CAMERAEL_HPP
 
-#include <Extras/Vision/Camera/AbstractCamera.hpp>
+#include "Extras/Vision/Camera/AbstractCamera.hpp"
 #include <esp32-hal-psram.h>
 #include <esp_camera.h>
 #include "Arduino.h"
-#include <LED/CameraLED.hpp>
+#include "LED/CameraLED.hpp"
 
-class CameraEL : public Energyleaf::Stream::V1::Extras::Vision::AbstractCamera<camera_config_t> {
+class CameraEL : public Apalinea::Extras::Vision::AbstractCamera<camera_config_t> {
     public:
         using CameraConfig = camera_config_t;
 
@@ -55,7 +55,7 @@ class CameraEL : public Energyleaf::Stream::V1::Extras::Vision::AbstractCamera<c
         void internalStop() override{
             this->led.disable();
         }
-        Energyleaf::Stream::V1::Types::Image getInternalImage() const override {
+        Apalinea::Core::Type::Image getInternalImage() const override {
             camera_fb_t* framebuffer = esp_camera_fb_get();
             if (!framebuffer) {
                 throw std::runtime_error("Camera capture failed!");
@@ -84,11 +84,11 @@ class CameraEL : public Energyleaf::Stream::V1::Extras::Vision::AbstractCamera<c
                     }
                 }
             }
-            Energyleaf::Stream::V1::Types::Image img;
+            Apalinea::Core::Type::Image img;
             img.setWidth(framebuffer->width);
             img.setHeight(framebuffer->height);
             img.setBytesPerPixel(3);
-            img.setFormat(Energyleaf::Stream::V1::Types::ImageFormat::FB_BGR888);
+            img.setFormat(Apalinea::Core::Type::ImageFormat::FB_BGR888);
             img.initData();
             bool s = fmt2rgb888(framebuffer->buf, framebuffer->len, framebuffer->format, img.getData());
             if (framebuffer) {
