@@ -1,28 +1,24 @@
-//
-// Created by SlepiK on 02.02.2024.
-//
-
-#ifndef SENSOR_ENRICHER_TOKEN_HPP
-#define SENSOR_ENRICHER_TOKEN_HPP
+#ifndef ENERGYLEAF_SENSOR_ENRICHER_TOKEN_HPP
+#define ENERGYLEAF_SENSOR_ENRICHER_TOKEN_HPP
 
 #include "Operator/PipeOperator/EnrichPipeOperator/AbstractEnricher.hpp"
 #include "Extras/Network/WebSender/AbstractWebSender.hpp"
 #include "WebSender/WebSender.hpp"
 
-namespace Sensor::Enricher {
+namespace Enricher {
     class Token :   public Apalinea::Operator::PipeOperator::AbstractEnricher, 
-                    public Apalinea::Extras::Network::AbstractWebSender<Sensor::WebSender::WebSender> {
+                    public Apalinea::Extras::Network::AbstractWebSender<WebSender::WebSender> {
     public:
         explicit Token() : AbstractEnricher(), AbstractWebSender() {
         }
 
-        explicit Token(Sensor::WebSender::WebSender *client) : AbstractEnricher(), AbstractWebSender(client) {
+        explicit Token(WebSender::WebSender *client) : AbstractEnricher(), AbstractWebSender(client) {
         }
 
-        explicit Token(Sensor::Enricher::Token &other) :  AbstractEnricher(), AbstractWebSender(other.getSender()) {
+        explicit Token(Enricher::Token &other) :  AbstractEnricher(), AbstractWebSender(other.getSender()) {
         }
 
-        explicit Token(Sensor::Enricher::Token &&other) noexcept :    AbstractEnricher(), AbstractWebSender(std::move(other.getSender())) {
+        explicit Token(Enricher::Token &&other) noexcept :    AbstractEnricher(), AbstractWebSender(std::move(other.getSender())) {
         }
 
         ~Token() = default;
@@ -43,4 +39,4 @@ namespace Sensor::Enricher {
     };
 }
 
-#endif
+#endif //ENERGYLEAF_SENSOR_ENRICHER_TOKEN_HPP

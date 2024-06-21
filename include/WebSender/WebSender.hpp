@@ -1,9 +1,5 @@
-//
-// Created by SlepiK on 02.02.2024.
-//
-
-#ifndef SENSOR_WEBSENDER_WEBSENDER_HPP
-#define SENSOR_WEBSENDER_WEBSENDER_HPP
+#ifndef ENERGYLEAF_SENSOR_WEBSENDER_HPP
+#define ENERGYLEAF_SENSOR_WEBSENDER_HPP
 
 #ifndef USE_ENERGYLEAF
 #define USE_ENERGYLEAF
@@ -25,18 +21,15 @@
 #define ENERGYLEAF_ENDPOINT_DATA "api/v1/sensor_input"
 #endif
 
-
 #include <WiFiClientSecure.h>
-
-#include <Energyleaf.pb.h>
-
-#include <Energyleaf/Energyleaf.error.h>
-#include <Energyleaf/Energyleaf.cert.h>
 #include <pb_decode.h>
 #include <pb_encode.h>
 #include <cstring>
+#include "Energyleaf.pb.h"
+#include "Energyleaf/Energyleaf.error.h"
+#include "Energyleaf/Energyleaf.cert.h"
 
-namespace Sensor::WebSender {
+namespace WebSender {
     class WebSender {
         public:
 
@@ -64,14 +57,14 @@ namespace Sensor::WebSender {
                 expiresIn = 0;
             }
 
-            explicit WebSender(const Sensor::WebSender::WebSender &other) : WebSender(other.client, other.certificate) {
+            explicit WebSender(const WebSender &other) : WebSender(other.client, other.certificate) {
                 this->host = other.host;
                 this->port = other.port;
                 this->accessToken = other.accessToken;       
                 log_d("Creation of an WebSender-Instance with given other WebSender-Instance!");    
             }
 
-            explicit WebSender(Sensor::WebSender::WebSender &&other) : WebSender(std::move(other.client), std::move(other.certificate)) {
+            explicit WebSender(WebSender &&other) : WebSender(std::move(other.client), std::move(other.certificate)) {
                 this->host = std::move(other.host);
                 this->port = std::move(other.port);
                 this->accessToken = std::move(other.accessToken);       
@@ -164,6 +157,7 @@ namespace Sensor::WebSender {
             uint32_t getRotation() {
                 return this->rotation;
             }
+
         private:
             char *host;
             uint16_t port; 
@@ -178,7 +172,6 @@ namespace Sensor::WebSender {
             float value = 0.f;
             bool active;
             char* certificate;
-
 
             ENERGYLEAF_ERROR sendIntern() {
                 if(this->client != nullptr) {
@@ -599,8 +592,7 @@ namespace Sensor::WebSender {
                     return ENERGYLEAF_ERROR::ERROR;
                 }
             }
-        protected:
     };
 }
 
-#endif
+#endif //ENERGYLEAF_SENSOR_WEBSENDER_HPP

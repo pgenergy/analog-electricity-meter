@@ -35,9 +35,9 @@
 #include "Executor/FRExecutor.hpp"
 #include <Core/Executor/STLExecutor.hpp>
 
-SET_LOOP_TASK_STACK_SIZE(16 * 1024);  // 16KB
+SET_LOOP_TASK_STACK_SIZE(16 * 1024);
 
-const char *ntpServer = "pool.ntp.org";  // Recode to use TZ
+const char *ntpServer = "pool.ntp.org";
 const long gmtOffset_sec = 3600;
 const int daylightOffset_sec = 0;
 
@@ -90,21 +90,21 @@ void setup() {
     vConfig.pixel_format = PIXFORMAT_JPEG;
     vConfig.grab_mode = CAMERA_GRAB_LATEST;
 
-        if (psramFound()) {
-            vConfig.frame_size = FRAMESIZE_QVGA;
-            vConfig.jpeg_quality = 10;
-            vConfig.fb_count = 2;
-            vConfig.fb_location = CAMERA_FB_IN_PSRAM;
-        } else {
-            vConfig.frame_size = FRAMESIZE_QVGA;
-            vConfig.jpeg_quality = 12;
-            vConfig.fb_count = 1;
-            vConfig.fb_location = CAMERA_FB_IN_DRAM;
-        }
+    if (psramFound()) {
+        vConfig.frame_size = FRAMESIZE_QVGA;
+        vConfig.jpeg_quality = 10;
+        vConfig.fb_count = 2;
+        vConfig.fb_location = CAMERA_FB_IN_PSRAM;
+    } else {
+        vConfig.frame_size = FRAMESIZE_QVGA;
+        vConfig.jpeg_quality = 12;
+        vConfig.fb_count = 1;
+        vConfig.fb_location = CAMERA_FB_IN_DRAM;
+    }
 
     camerasourcelink->getOperator().setCameraConfig(vConfig);
     camerasourcelink->getOperator().start();
-    auto enrichRequest = plan.createPipe<Sensor::Enricher::TokenEnrichPipeOperator>();
+    auto enrichRequest = plan.createPipe<Enricher::TokenEnrichPipeOperator>();
     enrichRequest->getOperator().getEnricher().getSender()->setHost("admin.energyleaf.de");
     enrichRequest->getOperator().getEnricher().getSender()->setPort(443);
     auto pipelink2 = plan.createPipe<Apalinea::Operator::PipeOperator::CropPipeOperator>();
@@ -113,7 +113,6 @@ void setup() {
     pipelink3->getOperator().setLowerBorder(Apalinea::Core::Type::Pixel::HSV(90.f,50.f,70.f));
     pipelink3->getOperator().setHigherBorder(Apalinea::Core::Type::Pixel::HSV(128.f,255.f,255.f));
     auto pipelink4 = plan.createPipe<Apalinea::Operator::PipeOperator::SelectPipeOperator>();
-    //pipelink4->getOperator().setThreshold(300);//Expression
     auto *ti = new Apalinea::Expression::DataType::DtSizeTExpression("FOUNDPIXEL");
     auto *cv = new Apalinea::Expression::DataType::DtSizeTExpression(300);
     auto *comp = new Apalinea::Expression::Compare::CompareExpression();
@@ -124,8 +123,7 @@ void setup() {
     auto pipelink5 = plan.createPipe<Apalinea::Operator::PipeOperator::StatePipeOperator>();
     pipelink5->getOperator().setState(false);
     auto pipelink6 = plan.createPipe<Apalinea::Operator::PipeOperator::CalculatorPipeOperator>();
-    //pipelink6->getOperator().setRotationPerKWh(375);
-    auto websink = plan.createSink<Apalinea::Operator::SinkOperator::SenderSinkOperator<Sensor::Sender::Power>>();
+    auto websink = plan.createSink<Apalinea::Operator::SinkOperator::SenderSinkOperator<Sender::Power>>();
     websink.get()->getOperator().getSender().setSender(enrichRequest.get()->getOperator().getEnricher());
     
     plan.connect(camerasourcelink,enrichRequest);
@@ -140,7 +138,6 @@ void setup() {
 
 void loop() {
     try {
-        //plan.process();
         plan.processOrdered();
         plan.join();
     } catch (std::runtime_error &error) {

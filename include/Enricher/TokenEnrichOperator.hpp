@@ -1,14 +1,10 @@
-//
-// Created by SlepiK on 18.06.2024.
-//
-
-#ifndef SENSOR_ENRICHER_TOKENENRICHER_HPP
-#define SENSOR_ENRICHER_TOKENENRICHER_HPP
+#ifndef ENERGYLEAF_SENSOR_ENRICHER_TOKENENRICHER_HPP
+#define ENERGYLEAF_SENSOR_ENRICHER_TOKENENRICHER_HPP
 
 #include "Token.hpp"
 #include "Operator/PipeOperator/EnrichPipeOperator/EnrichPipeOperator.hpp"
 
-namespace Sensor::Enricher {
+namespace Enricher {
     class TokenEnrichPipeOperator : public Apalinea::Operator::PipeOperator::EnrichPipeOperator<Token> {
     public:
         [[nodiscard]] Apalinea::Core::Operator::OperatorMode getOperatorMode() const override {
@@ -17,4 +13,4 @@ namespace Sensor::Enricher {
     };
 }
 
-#endif
+#endif //ENERGYLEAF_SENSOR_ENRICHER_TOKENENRICHER_HPP
