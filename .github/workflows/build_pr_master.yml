@@ -1,9 +1,5 @@
 name: Build for PR or push in main
 
-permissions:
-  contents: read
-  packages: read
-
 on:
   push:
     branches:
