@@ -40,7 +40,7 @@ jobs:
       - name: Zip firmware
         run: | 
              mkdir -p ./release
-             7z a ./release/aem-build.zip ./build_output/*
+             7z a ./release/aem-build.zip ./pio/build/espcam/firmware.bin
         
       - name: Upload to release
         env: 
