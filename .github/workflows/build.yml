@@ -1,36 +1,49 @@
-name: Build
+name: Build and Release
 
+permissions:
+  contents: write
+  packages: write
+  
 on:
-  workflow_dispatch:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    tags:
+      - v[0-9]+.*
 
 jobs:
-  build:
+  create-release:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/cache@v3
+      - uses: actions/checkout@v4
+      - uses: taiki-e/create-gh-release-action@v1
         with:
-          path: |
-            ~/.cache/pip
-            ~/.platformio/.cache
-          key: ${{ runner.os }}-pio
-      - uses: actions/setup-python@v4
+          token: ${{secrets.GITHUB_TOKEN}}
+  build-espcam:
+    needs: create-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-      - name: Set up SSH key and register with agent
-        env:
-          SSH_AUTH_SOCK: ${{ runner.temp }}/ssh-agent.sock
-        run: |
-            ssh-agent -a $SSH_AUTH_SOCK > /dev/null
-            ssh-add - <<< "${{ secrets.STREAMGIT }}"
+          
       - name: Install PlatformIO Core
-        run: pip install --upgrade platformio
-      - name: Build PlatformIO Project
-        env:
-          SSH_AUTH_SOCK: ${{ runner.temp }}/ssh-agent.sock
-        run: pio run -e github
+        run: |
+            pip install wheel
+            pip install --upgrade platformio
+
+      - name: Run PlatformIO
+        run: platformio run -e espcam
+
+      - name: Zip firmware
+        run: | 
+             mkdir -p ./release
+             7z a ./release/aem-build.zip ./build_output/*
+        
+      - name: Upload to release
+        env: 
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        run: |
+            gh release upload $GITHUB_REF_NAME release/aem-build.zip
