@@ -21,7 +21,7 @@
 #include "Operator/SinkOperator/SenderSinkOperator/SenderSinkOperator.hpp"
 #include "Enricher/TokenEnrichOperator.hpp"
 #include "Enricher/Token.hpp"
-#include "Sender/Power.hpp"
+#include "Sender/Energy.hpp"
 #include "CameraEL.hpp"
 #include "Core/Constants/Settings.hpp"
 #include "PSRAMCreator.hpp"
@@ -30,6 +30,8 @@
 #include "Expression/Compare/CompareExpression.hpp"
 #include "Executor/FRExecutor.hpp"
 #include "Core/Executor/STLExecutor.hpp"
+#include "Log/SerialLog.hpp"
+#include "Sender/EnergySenderSinkOperator.hpp"
 
 SET_LOOP_TASK_STACK_SIZE(16 * 1024);
 
@@ -37,19 +39,25 @@ const char *ntpServer = "pool.ntp.org";
 const long gmtOffset_sec = 3600;
 const int daylightOffset_sec = 0;
 
-Apalinea::Core::Plan::Plan plan(std::make_shared<Apalinea::Core::Executor::STLExecutor>(2));
+Apalinea::Core::Plan::Plan* plan;
 
 void setup() {
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);  // disable brownout detector
 
     Serial.begin(115200);
     Serial.setDebugOutput(true);
+    Serial.println("Test");
+    Serial.flush();
 
     log_d("Total heap: %d", ESP.getHeapSize());
     log_d("Free heap: %d", ESP.getFreeHeap());
     log_d("Total PSRAM: %d", ESP.getPsramSize());
     log_d("Free PSRAM: %d", ESP.getFreePsram());
     log_i("Current MAC: %s", WiFi.macAddress().c_str());
+
+    WebSender::WebSender ws;
+    Apalinea::Core::Log::LogManager::addLog(std::make_unique<Log::SerialLog>());
+    plan = new Apalinea::Core::Plan::Plan(std::make_shared<Apalinea::Core::Executor::STLExecutor>(2));
 
     WiFiManager wifiManager;
     wifiManager.autoConnect("Energyleaf_Sensor");
@@ -61,7 +69,7 @@ void setup() {
 
     Apalinea::Core::Constants::Settings::uint8_tCreator.setCreator(std::make_unique<PSRAMCreator<std::uint8_t>>());
 
-    auto camerasourcelink = plan.createSource<Apalinea::Operator::SourceOperator::CameraSourceOperator<CameraEL>>();
+    auto camerasourcelink = plan->createSource<Apalinea::Operator::SourceOperator::CameraSourceOperator<CameraEL>>();
     
     camera_config_t vConfig;
     vConfig.ledc_channel = LEDC_CHANNEL_0;
@@ -100,15 +108,15 @@ void setup() {
 
     camerasourcelink->getOperator().setCameraConfig(vConfig);
     camerasourcelink->getOperator().start();
-    auto enrichRequest = plan.createPipe<Enricher::TokenEnrichPipeOperator>();
+    auto enrichRequest = plan->createPipe<Enricher::TokenEnrichPipeOperator>();
     enrichRequest->getOperator().getEnricher().getSender()->setHost("admin.energyleaf.de");
     enrichRequest->getOperator().getEnricher().getSender()->setPort(443);
-    auto pipelink2 = plan.createPipe<Apalinea::Operator::PipeOperator::CropPipeOperator>();
+    auto pipelink2 = plan->createPipe<Apalinea::Operator::PipeOperator::CropPipeOperator>();
     pipelink2->getOperator().setSize(120, 60, 0, 240);
-    auto pipelink3 = plan.createPipe<Apalinea::Operator::PipeOperator::DetectorPipeOperator>();
+    auto pipelink3 = plan->createPipe<Apalinea::Operator::PipeOperator::DetectorPipeOperator>();
     pipelink3->getOperator().setLowerBorder(Apalinea::Core::Type::Pixel::HSV(90.f,50.f,70.f));
     pipelink3->getOperator().setHigherBorder(Apalinea::Core::Type::Pixel::HSV(128.f,255.f,255.f));
-    auto pipelink4 = plan.createPipe<Apalinea::Operator::PipeOperator::SelectPipeOperator>();
+    auto pipelink4 = plan->createPipe<Apalinea::Operator::PipeOperator::SelectPipeOperator>();
     auto *ti = new Apalinea::Expression::DataType::DtSizeTExpression("FOUNDPIXEL");
     auto *cv = new Apalinea::Expression::DataType::DtSizeTExpression(300);
     auto *comp = new Apalinea::Expression::Compare::CompareExpression();
@@ -116,26 +124,26 @@ void setup() {
     comp->add(cv);
     comp->setCompareType(Apalinea::Expression::Compare::CompareTypes::GREATER_THAN);
     pipelink4->getOperator().setExpression(comp);
-    auto pipelink5 = plan.createPipe<Apalinea::Operator::PipeOperator::StatePipeOperator>();
+    auto pipelink5 = plan->createPipe<Apalinea::Operator::PipeOperator::StatePipeOperator>();
     pipelink5->getOperator().setState(false);
-    auto pipelink6 = plan.createPipe<Apalinea::Operator::PipeOperator::CalculatorPipeOperator>();
-    auto websink = plan.createSink<Apalinea::Operator::SinkOperator::SenderSinkOperator<Sender::Power>>();
-    websink.get()->getOperator().getSender().setSender(enrichRequest.get()->getOperator().getEnricher());
+    auto pipelink6 = plan->createPipe<Apalinea::Operator::PipeOperator::CalculatorPipeOperator>();
+    auto websink = plan->createSink<Sender::EnergySenderSinkOperator>();
+    websink.get()->getOperator().getSender().setSender(enrichRequest.get()->getOperator().getEnricher().getSender());
     
-    plan.connect(camerasourcelink,enrichRequest);
-    plan.connect(enrichRequest,pipelink2);
-    plan.connect(pipelink2,pipelink3);
-    plan.connect(pipelink3,pipelink4);
-    plan.connect(pipelink4,pipelink5);
-    plan.connect(pipelink5,pipelink6);
-    plan.connect(pipelink6,websink);
-    plan.order();
+    plan->connect(camerasourcelink,enrichRequest);
+    plan->connect(enrichRequest,pipelink2);
+    plan->connect(pipelink2,pipelink3);
+    plan->connect(pipelink3,pipelink4);
+    plan->connect(pipelink4,pipelink5);
+    plan->connect(pipelink5,pipelink6);
+    plan->connect(pipelink6,websink);
+    plan->order();
 }
 
 void loop() {
     try {
-        plan.processOrdered();
-        plan.join();
+        plan->processOrdered();
+        plan->join();
     } catch (std::runtime_error &error) {
         log_d("Error: %s", error.what());
     }

@@ -28,6 +28,8 @@
 #include "Energyleaf.pb.h"
 #include "Energyleaf/Energyleaf.error.h"
 #include "Energyleaf/Energyleaf.cert.h"
+#include "Core/Log/LogManager.hpp"
+#include "Log/SerialLog.hpp"
 
 namespace WebSender {
     class WebSender {
@@ -109,6 +111,7 @@ namespace WebSender {
             }
 
             bool send(float pValue) {
+                log_i("Value to send: %f",pValue);
                 this->value = pValue;
                 if(this->retryCounter == 5){
                     return false;
@@ -146,7 +149,7 @@ namespace WebSender {
                     }
                 } else {
                     --this->expiresIn;
-                    return true;//ToDo: Maybe own enum for ret.-type(?)
+                    return true;
                 }
             }
 
@@ -167,7 +170,7 @@ namespace WebSender {
             uint8_t retryCounter = 0;
             uint8_t manualMaxCounter = ENERGYLEAF_MANUALCOUNTER;
             uint8_t manualCurrentCounter = ENERGYLEAF_MANUALCOUNTER;
-            uint32_t rotation = 0;//375; ToDo: remove if send by service
+            uint32_t rotation = 0;
             WiFiClientSecure *client;
             float value = 0.f;
             bool active;
@@ -181,11 +184,17 @@ namespace WebSender {
                         uint16_t bodySize = 0;
                         {
                             //Prepare SensorDataRequest
-                            uint8_t bufferSensorDataRequest[energyleaf_SensorDataRequest_size];
+                            uint8_t bufferSensorDataRequest[energyleaf_SensorDataRequestV2_size];
                             pb_ostream_t streamSensorDataRequestOut;
                             {
-                                energyleaf_SensorDataRequest sensorDataRequest = energyleaf_SensorDataRequest_init_default;
-                                memcpy(sensorDataRequest.access_token, this->accessToken, sizeof(this->accessToken));
+                                energyleaf_SensorDataRequestV2 sensorDataRequest = energyleaf_SensorDataRequestV2_init_default;
+                                memcpy(sensorDataRequest.access_token, this->accessToken, sizeof(sensorDataRequest.access_token));
+                                Apalinea::Core::Log::LogManager::log(Apalinea::Core::Log::LogLevelCategory::INFORMATION, Apalinea::Core::Log::getFilename(__FILE__),__LINE__,"Prepare SensorDataRequest");
+                                Apalinea::Core::Log::LogManager::log(Apalinea::Core::Log::LogLevelCategory::INFORMATION, Apalinea::Core::Log::getFilename(__FILE__),__LINE__,"Token (intern):");
+                                Apalinea::Core::Log::LogManager::log(Apalinea::Core::Log::LogLevelCategory::INFORMATION, Apalinea::Core::Log::getFilename(__FILE__),__LINE__,this->accessToken);
+                                Apalinea::Core::Log::LogManager::log(Apalinea::Core::Log::LogLevelCategory::INFORMATION, Apalinea::Core::Log::getFilename(__FILE__),__LINE__,"Token (message):");
+                                Apalinea::Core::Log::LogManager::log(Apalinea::Core::Log::LogLevelCategory::INFORMATION, Apalinea::Core::Log::getFilename(__FILE__),__LINE__,sensorDataRequest.access_token);
+                                
                                 sensorDataRequest.type = this->type;
 
                                 sensorDataRequest.value = this->value;
@@ -194,7 +203,7 @@ namespace WebSender {
 
                                 streamSensorDataRequestOut = pb_ostream_from_buffer(bufferSensorDataRequest, sizeof(bufferSensorDataRequest));
 
-                                state = pb_encode(&streamSensorDataRequestOut,energyleaf_SensorDataRequest_fields, &sensorDataRequest);
+                                state = pb_encode(&streamSensorDataRequestOut,energyleaf_SensorDataRequestV2_fields, &sensorDataRequest);
                             }
 
                             if(!state) {
@@ -573,8 +582,10 @@ namespace WebSender {
                             {
                                 if(this->accessToken != nullptr) {
                                     delete[] this->accessToken;
+                                    this->accessToken = nullptr;
                                 }
                                 this->accessToken = new char[strlen(tokenResponse.access_token) + 1];
+                                log_d("Token: %s",tokenResponse.access_token);
                                 strcpy(this->accessToken, tokenResponse.access_token);
                                 this->expiresIn = tokenResponse.expires_in;
                                 if(tokenResponse.has_analog_rotation_per_kwh) {
