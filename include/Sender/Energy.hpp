@@ -7,29 +7,29 @@
 #include "Core/Type/Datatype/DtFloat.hpp"
 
 namespace Sender {
-    class Power :   public Apalinea::Operator::SinkOperator::AbstractSender,
+    class Energy :   public Apalinea::Operator::SinkOperator::AbstractSender,
                     public Apalinea::Extras::Network::AbstractWebSender<WebSender::WebSender> {
     public:
-        explicit Power() : AbstractSender(), AbstractWebSender() {
+        explicit Energy() : AbstractSender(), AbstractWebSender() {
         }
 
-        explicit Power(WebSender::WebSender *client) : AbstractSender(), AbstractWebSender(client) {
+        explicit Energy(WebSender::WebSender *client) : AbstractSender(), AbstractWebSender(client) {
         }
 
-        explicit Power(Sender::Power& other) :  AbstractSender(), AbstractWebSender(other.getSender()) {
+        explicit Energy(Sender::Energy& other) :  AbstractSender(), AbstractWebSender(other.getSender()) {
         }
 
-        explicit Power(Sender::Power&& other) noexcept :    AbstractSender(), AbstractWebSender(std::move(other.getSender())) {
+        explicit Energy(Sender::Energy&& other) noexcept :    AbstractSender(), AbstractWebSender(std::move(other.getSender())) {
         }
 
-        ~Power() = default;
+        ~Energy() = default;
 
         bool work(Apalinea::Core::Tuple::Tuple &inputTuple) override {
             auto items = inputTuple.getItems();
-            if(items.find("Power") != items.end()) {
-                auto power = inputTuple.getItem<Apalinea::Core::Type::Datatype::DtFloat>("Power");
+            if(items.find("energy") != items.end()) {
+                auto power = inputTuple.getItem<Apalinea::Core::Type::Datatype::DtFloat>("energy");
 
-                log_i("Debug Power-Value: %f",power.toFloat());
+                log_i("Debug energy-Value: %f",power.toFloat());
                 return this->getSender()->send(power.toFloat());
             } else {
                 return false;

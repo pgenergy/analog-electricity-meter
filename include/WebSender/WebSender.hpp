@@ -28,6 +28,8 @@
 #include "Energyleaf.pb.h"
 #include "Energyleaf/Energyleaf.error.h"
 #include "Energyleaf/Energyleaf.cert.h"
+#include "Core/Log/LogManager.hpp"
+#include "Log/SerialLog.hpp"
 
 namespace WebSender {
     class WebSender {
@@ -186,7 +188,13 @@ namespace WebSender {
                             pb_ostream_t streamSensorDataRequestOut;
                             {
                                 energyleaf_SensorDataRequestV2 sensorDataRequest = energyleaf_SensorDataRequestV2_init_default;
-                                memcpy(sensorDataRequest.access_token, this->accessToken, sizeof(this->accessToken));
+                                memcpy(sensorDataRequest.access_token, this->accessToken, sizeof(sensorDataRequest.access_token));
+                                Apalinea::Core::Log::LogManager::log(Apalinea::Core::Log::LogLevelCategory::INFORMATION, Apalinea::Core::Log::getFilename(__FILE__),__LINE__,"Prepare SensorDataRequest");
+                                Apalinea::Core::Log::LogManager::log(Apalinea::Core::Log::LogLevelCategory::INFORMATION, Apalinea::Core::Log::getFilename(__FILE__),__LINE__,"Token (intern):");
+                                Apalinea::Core::Log::LogManager::log(Apalinea::Core::Log::LogLevelCategory::INFORMATION, Apalinea::Core::Log::getFilename(__FILE__),__LINE__,this->accessToken);
+                                Apalinea::Core::Log::LogManager::log(Apalinea::Core::Log::LogLevelCategory::INFORMATION, Apalinea::Core::Log::getFilename(__FILE__),__LINE__,"Token (message):");
+                                Apalinea::Core::Log::LogManager::log(Apalinea::Core::Log::LogLevelCategory::INFORMATION, Apalinea::Core::Log::getFilename(__FILE__),__LINE__,sensorDataRequest.access_token);
+                                
                                 sensorDataRequest.type = this->type;
 
                                 sensorDataRequest.value = this->value;

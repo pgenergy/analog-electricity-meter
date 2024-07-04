@@ -21,7 +21,7 @@
 #include "Operator/SinkOperator/SenderSinkOperator/SenderSinkOperator.hpp"
 #include "Enricher/TokenEnrichOperator.hpp"
 #include "Enricher/Token.hpp"
-#include "Sender/Power.hpp"
+#include "Sender/Energy.hpp"
 #include "CameraEL.hpp"
 #include "Core/Constants/Settings.hpp"
 #include "PSRAMCreator.hpp"
