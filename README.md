@@ -1,6 +1,6 @@
 # Analog electricity sensor
 
-[![Build](https://github.com/pgenergy/analog-electricity-meter/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/pgenergy/analog-electricity-meter/actions/workflows/build.yml)
+[![Build and Release](https://github.com/pgenergy/analog-electricity-meter/actions/workflows/build_and_release.yml/badge.svg?branch=master&event=release)](https://github.com/pgenergy/analog-electricity-meter/actions/workflows/build_and_release.yml)
 
 ## Notes
 - After the first start or each time the old WLAN connection is not available, a hotspot is activated for configuration purposes.
