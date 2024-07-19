@@ -64,14 +64,7 @@ void setup() {
 
     wifi_ps_type_t theType;
 
-    esp_err_t get_ps = esp_wifi_get_ps(&theType);
-    Serial.printf("Power save was: %d\n", theType);
-
-    Serial.printf("Power save to %d\n", WIFI_PS_NONE);
     esp_err_t set_ps = esp_wifi_set_ps(WIFI_PS_NONE);
-
-    get_ps = esp_wifi_get_ps(&theType);
-    Serial.printf("Power save was: %d\n", theType);
 
     configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 
