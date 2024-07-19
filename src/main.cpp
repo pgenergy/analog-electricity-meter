@@ -62,8 +62,6 @@ void setup() {
     WiFiManager wifiManager;
     wifiManager.autoConnect("Energyleaf_Sensor");
 
-    wifi_ps_type_t theType;
-
     esp_err_t set_ps = esp_wifi_set_ps(WIFI_PS_NONE);
 
     configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
