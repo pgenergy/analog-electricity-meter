@@ -10,6 +10,16 @@ namespace Sender {
         [[nodiscard]] Apalinea::Core::Operator::OperatorMode getOperatorMode() const override {
             return Apalinea::Core::Operator::OperatorMode::MAIN;
         }
+
+        void handleHeartbeat(std::optional<std::chrono::steady_clock::time_point> hbTP, Apalinea::Core::Tuple::Tuple &tuple) override {
+            if(tuple.getItems().size() > 0) {
+                this->process(tuple);
+                return;
+            } else {
+                vProcessState = Apalinea::Core::Operator::OperatorProcessState::BREAK;
+                return;
+            }
+        }
     };
 }
 

@@ -16,7 +16,7 @@
 #include "Operator/PipeOperator/DetectorPipeOperator/DetectorPipeOperator.hpp"
 #include "Operator/PipeOperator/StatePipeOperator/StatePipeOperator.hpp"
 #include "Operator/PipeOperator/SelectPipeOperator/SelectPipeOperator.hpp"
-#include "Operator/PipeOperator/CalculatorPipeOperator/CalculatorPipeOperator.hpp"
+#include "Operator/PipeOperator/EnergyCalculatorPipeOperator/EnergyCalculatorPipeOperator.hpp"
 #include "Operator/PipeOperator/EnrichPipeOperator/EnrichPipeOperator.hpp"
 #include "Operator/SinkOperator/SenderSinkOperator/SenderSinkOperator.hpp"
 #include "Enricher/TokenEnrichOperator.hpp"
@@ -62,6 +62,8 @@ void setup() {
     WiFiManager wifiManager;
     wifiManager.autoConnect("Energyleaf_Sensor");
 
+    esp_err_t set_ps = esp_wifi_set_ps(WIFI_PS_NONE);
+
     configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 
     Serial.print("IP address: ");
@@ -90,7 +92,7 @@ void setup() {
     vConfig.pin_sccb_scl = 27;
     vConfig.pin_pwdn = 32;
     vConfig.pin_reset = -1;
-    vConfig.xclk_freq_hz = 10000000;
+    vConfig.xclk_freq_hz = 16500000;//10000000;
     vConfig.pixel_format = PIXFORMAT_JPEG;
     vConfig.grab_mode = CAMERA_GRAB_LATEST;
 
@@ -126,7 +128,7 @@ void setup() {
     pipelink4->getOperator().setExpression(comp);
     auto pipelink5 = plan->createPipe<Apalinea::Operator::PipeOperator::StatePipeOperator>();
     pipelink5->getOperator().setState(false);
-    auto pipelink6 = plan->createPipe<Apalinea::Operator::PipeOperator::CalculatorPipeOperator>();
+    auto pipelink6 = plan->createPipe<Apalinea::Operator::PipeOperator::EnergyCalculatorPipeOperator>();
     auto websink = plan->createSink<Sender::EnergySenderSinkOperator>();
     websink.get()->getOperator().getSender().setSender(enrichRequest.get()->getOperator().getEnricher().getSender());
     
